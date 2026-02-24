@@ -1,7 +1,7 @@
 {
-  "name": "tavily-cli",
+  "name": "@syxs/tavily-cli",
   "version": "0.1.0",
-  "description": "Command-line interface for Tavily. Search, extract, crawl, map, and research directly from your terminal.",
+  "description": "Unofficial Tavily command-line interface by SYXS. Search, extract, crawl, map, and research directly from your terminal.",
   "main": "dist/index.js",
   "bin": {
     "tavily": "dist/index.js"
@@ -35,14 +35,14 @@
     "research",
     "llm"
   ],
-  "author": "Tavily",
+  "author": "SYXS",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tavily-ai/cli.git"
+    "url": "git+https://github.com/Lag0/tavily-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/tavily-ai/cli/issues"
+    "url": "https://github.com/Lag0/tavily-cli/issues"
   },
   "homepage": "https://docs.tavily.com",
   "engines": {

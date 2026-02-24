@@ -26,7 +26,7 @@ export async function handleSetupCommand(
 }
 
 async function installSkills(options: SetupOptions): Promise<void> {
-  const args = ['npx', 'skills', 'add', 'tavily/cli'];
+  const args = ['npx', 'skills', 'add', 'syxs/tavily-cli'];
 
   if (options.global) args.push('--global');
   if (options.agent) args.push('--agent', options.agent);

@@ -28,12 +28,12 @@ export async function handleInitCommand(
   };
 
   if (!options.skipInstall) {
-    printStep('Installing tavily-cli globally...');
+    printStep('Installing @syxs/tavily-cli globally...');
     try {
-      execSync('npm install -g tavily-cli', { stdio: 'inherit' });
+      execSync('npm install -g @syxs/tavily-cli', { stdio: 'inherit' });
       console.log('✓ CLI installed\n');
     } catch {
-      console.error('Failed to install tavily-cli globally.');
+      console.error('Failed to install @syxs/tavily-cli globally.');
       process.exit(1);
     }
   }
@@ -57,7 +57,7 @@ export async function handleInitCommand(
   if (!options.skipSkills) {
     printStep('Installing tavily skill...');
 
-    const args = ['npx', '-y', 'skills', 'add', 'tavily/cli'];
+    const args = ['npx', '-y', 'skills', 'add', 'syxs/tavily-cli'];
 
     if (options.all) args.push('--all');
     if (options.yes || options.all) args.push('--yes');

@@ -23,7 +23,7 @@ export function getClient(
     clientInstance = tavily({
       apiKey,
       apiBaseURL: apiUrl,
-      clientSource: 'tavily-cli',
+      clientSource: 'syxs-tavily-cli',
     });
   }
 

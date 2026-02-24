@@ -1,17 +1,43 @@
 # Tavily CLI
 
-Command-line interface for Tavily. Search, extract, crawl, map, and run research directly from your terminal.
+Unofficial command-line interface for Tavily, built by SYXS. Search, extract, crawl, map, and run research directly from your terminal.
+
+> This is **not** an official Tavily package. It is maintained by **SYXS**.
 
 ## Installation
 
+### Option 1: Local install (without npm publish)
+
 ```bash
-npm install -g tavily-cli
+git clone https://github.com/Lag0/tavily-cli.git
+cd tavily-cli
+pnpm install
+pnpm run build
+pnpm link --global
+```
+
+Then verify:
+
+```bash
+tavily --help
+```
+
+To remove the global local link later:
+
+```bash
+pnpm unlink --global @syxs/tavily-cli
+```
+
+### Option 2: npm (if published)
+
+```bash
+npm install -g @syxs/tavily-cli
 ```
 
 Or run the one-shot setup flow:
 
 ```bash
-npx -y tavily-cli@latest init --all --yes --api-key tvly-your-key
+npx -y @syxs/tavily-cli@latest init --all --yes --api-key tvly-your-key
 ```
 
 ## Quick Start
@@ -78,7 +104,7 @@ tavily setup mcp
 Equivalent direct commands:
 
 ```bash
-npx skills add tavily/cli
+npx skills add syxs/tavily-cli
 npx add-mcp "npx -y mcp-remote https://mcp.tavily.com/mcp" --name tavily
 ```
 

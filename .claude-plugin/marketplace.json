@@ -1,13 +1,13 @@
 {
   "name": "tavily",
   "owner": {
-    "name": "Tavily"
+    "name": "SYXS"
   },
   "plugins": [
     {
       "name": "tavily",
       "source": "./",
-      "description": "Search, extract, crawl, map, and research with a single CLI.",
+      "description": "Unofficial Tavily CLI by SYXS for search, extract, crawl, map, and research.",
       "skills": ["./skills/tavily-cli"]
     }
   ]

@@ -1,7 +1,7 @@
 ---
 name: tavily
 description: |
-  Official Tavily CLI skill for search, extract, crawl, map, and research.
+  Unofficial Tavily CLI skill by SYXS for search, extract, crawl, map, and research.
 
   USE FOR:
   - Web research and source discovery
@@ -12,7 +12,7 @@ description: |
   Must be installed and authenticated. See rules/install.md and rules/security.md.
 allowed-tools:
   - Bash(tavily *)
-  - Bash(npx tavily-cli *)
+  - Bash(npx @syxs/tavily-cli *)
 ---
 
 # Tavily CLI
@@ -20,6 +20,16 @@ allowed-tools:
 Use the `tavily` CLI for web operations.
 
 ## Prerequisites
+
+If the package is not published, install locally first:
+
+```bash
+git clone https://github.com/Lag0/tavily-cli.git
+cd tavily-cli
+pnpm install
+pnpm run build
+pnpm link --global
+```
 
 Check status:
 

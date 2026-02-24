@@ -1,9 +1,9 @@
 {
   "name": "tavily",
-  "description": "Search, extract, crawl, map, and research the web with Tavily CLI.",
+  "description": "Unofficial Tavily CLI by SYXS for search, extract, crawl, map, and research.",
   "version": "0.1.0",
   "author": {
-    "name": "Tavily"
+    "name": "SYXS"
   },
   "skills": ["./skills/tavily-cli"]
 }

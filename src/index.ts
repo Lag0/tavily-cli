@@ -352,7 +352,7 @@ program
 program
   .command('init')
   .description(
-    'Install CLI globally, configure auth, and install skills in one step (npx -y tavily-cli init)'
+    'Install CLI globally, configure auth, and install skills in one step (npx -y @syxs/tavily-cli init)'
   )
   .option('--all', 'Install skills to all detected agents (implies --yes)')
   .option('-y, --yes', 'Skip confirmation prompts for skills installation')
