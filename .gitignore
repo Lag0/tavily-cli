@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.pnpm-store/
+.firecrawl/
+.tavily/
+.env
+.DS_Store
+coverage/

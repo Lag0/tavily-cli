@@ -1,0 +1,9 @@
+{
+  "name": "tavily",
+  "description": "Search, extract, crawl, map, and research the web with Tavily CLI.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Tavily"
+  },
+  "skills": ["./skills/tavily-cli"]
+}

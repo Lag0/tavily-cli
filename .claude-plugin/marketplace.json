@@ -1,0 +1,14 @@
+{
+  "name": "tavily",
+  "owner": {
+    "name": "Tavily"
+  },
+  "plugins": [
+    {
+      "name": "tavily",
+      "source": "./",
+      "description": "Search, extract, crawl, map, and research with a single CLI.",
+      "skills": ["./skills/tavily-cli"]
+    }
+  ]
+}

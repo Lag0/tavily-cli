@@ -1,0 +1,66 @@
+{
+  "name": "tavily-cli",
+  "version": "0.1.0",
+  "description": "Command-line interface for Tavily. Search, extract, crawl, map, and research directly from your terminal.",
+  "main": "dist/index.js",
+  "bin": {
+    "tavily": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "local": "node dist/index.js",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm run build",
+    "format": "prettier --write \"src/**/*.{ts,json}\" \"*.{json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,json}\" \"*.{json,md}\"",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "publish-beta": "npm publish --tag beta",
+    "publish-prod": "npm publish --access public"
+  },
+  "lint-staged": {
+    "*.{ts,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [
+    "tavily",
+    "cli",
+    "search",
+    "crawl",
+    "extract",
+    "research",
+    "llm"
+  ],
+  "author": "Tavily",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tavily-ai/cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tavily-ai/cli/issues"
+  },
+  "homepage": "https://docs.tavily.com",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "packageManager": "pnpm@10.29.3",
+  "dependencies": {
+    "@tavily/core": "^0.7.1",
+    "commander": "^14.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "vitest": "^4.0.7"
+  }
+}
