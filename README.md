@@ -49,7 +49,7 @@ tavily login --api-key tvly-your-key
 
 # Check status
 
-tavily --status
+tavily status
 
 # Search
 
@@ -104,7 +104,7 @@ tavily setup mcp
 Equivalent direct commands:
 
 ```bash
-npx skills add syxs/tavily-cli
+npx skills add https://github.com/lag0/tavily-cli.git
 npx add-mcp "npx -y mcp-remote https://mcp.tavily.com/mcp" --name tavily
 ```
 

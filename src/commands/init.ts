@@ -1,6 +1,6 @@
-import { execSync } from 'child_process';
 import { getApiKey, updateConfig } from '../utils/config';
 import { saveCredentials } from '../utils/credentials';
+import { runCommandOrExit } from '../utils/process';
 
 export interface InitOptions {
   global?: boolean;
@@ -29,13 +29,12 @@ export async function handleInitCommand(
 
   if (!options.skipInstall) {
     printStep('Installing @syxs/tavily-cli globally...');
-    try {
-      execSync('npm install -g @syxs/tavily-cli', { stdio: 'inherit' });
-      console.log('✓ CLI installed\n');
-    } catch {
-      console.error('Failed to install @syxs/tavily-cli globally.');
-      process.exit(1);
-    }
+    runCommandOrExit({
+      command: 'npm',
+      args: ['install', '-g', '@syxs/tavily-cli'],
+      failureMessage: 'Failed to install @syxs/tavily-cli globally',
+    });
+    console.log('✓ CLI installed\n');
   }
 
   if (!options.skipAuth) {
@@ -57,22 +56,27 @@ export async function handleInitCommand(
   if (!options.skipSkills) {
     printStep('Installing tavily skill...');
 
-    const args = ['npx', '-y', 'skills', 'add', 'syxs/tavily-cli'];
+    const args = [
+      'npx',
+      '-y',
+      'skills',
+      'add',
+      'https://github.com/lag0/tavily-cli.git',
+    ];
+    const command = args.shift() as string;
 
     if (options.all) args.push('--all');
     if (options.yes || options.all) args.push('--yes');
     if (options.global) args.push('--global');
     if (options.agent) args.push('--agent', options.agent);
 
-    try {
-      execSync(args.join(' '), { stdio: 'inherit' });
-      console.log('✓ Skill installed\n');
-    } catch {
-      console.error(
-        'Failed to install skills. You can retry with: tavily setup skills'
-      );
-      process.exit(1);
-    }
+    runCommandOrExit({
+      command,
+      args,
+      failureMessage:
+        'Failed to install skills. You can retry with: tavily setup skills',
+    });
+    console.log('✓ Skill installed\n');
   }
 
   console.log('Setup complete. Run tavily --help to get started.');

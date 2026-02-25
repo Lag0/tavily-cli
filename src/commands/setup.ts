@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { runCommandOrExit } from '../utils/process';
 
 export type SetupSubcommand = 'skills' | 'mcp';
 
@@ -26,26 +26,24 @@ export async function handleSetupCommand(
 }
 
 async function installSkills(options: SetupOptions): Promise<void> {
-  const args = ['npx', 'skills', 'add', 'syxs/tavily-cli'];
+  const args = ['skills', 'add', 'https://github.com/lag0/tavily-cli.git'];
 
   if (options.global) args.push('--global');
   if (options.agent) args.push('--agent', options.agent);
 
-  const cmd = args.join(' ');
-  console.log(`Running: ${cmd}\n`);
-
-  try {
-    execSync(cmd, { stdio: 'inherit' });
-  } catch {
-    process.exit(1);
-  }
+  runCommandOrExit({
+    command: 'npx',
+    args,
+    failureMessage:
+      'Failed to install Tavily skill. You can retry with: tavily setup skills',
+    printCommand: true,
+  });
 }
 
 async function installMcp(options: SetupOptions): Promise<void> {
   const args = [
-    'npx',
     'add-mcp',
-    '"npx -y mcp-remote https://mcp.tavily.com/mcp"',
+    'npx -y mcp-remote https://mcp.tavily.com/mcp',
     '--name',
     'tavily',
   ];
@@ -53,12 +51,11 @@ async function installMcp(options: SetupOptions): Promise<void> {
   if (options.global) args.push('--global');
   if (options.agent) args.push('--agent', options.agent);
 
-  const cmd = args.join(' ');
-  console.log(`Running: ${cmd}\n`);
-
-  try {
-    execSync(cmd, { stdio: 'inherit' });
-  } catch {
-    process.exit(1);
-  }
+  runCommandOrExit({
+    command: 'npx',
+    args,
+    failureMessage:
+      'Failed to install Tavily MCP. You can retry with: tavily setup mcp',
+    printCommand: true,
+  });
 }
