@@ -1,76 +1,47 @@
 ---
 name: tavily-cli-installation
 description: |
-  Install and authenticate the unofficial Tavily CLI by SYXS.
+  Trust-boundary and readiness checks for Tavily CLI skill usage.
 ---
 
-# Tavily CLI Installation
+# Tavily CLI Readiness
 
-Use this checklist when `tavily` is missing or not authenticated.
+This skill assumes Tavily CLI is provisioned by your environment owner.
 
-## 1) Install CLI
+To reduce supply-chain risk in skill execution, this file does not include
+installer bootstrap commands or remote source URLs.
 
-### Preferred (npm)
+Use approved internal documentation/channels for installation.
 
-```bash
-npm install -g @syxs/tavily-cli@latest
-```
+## Preflight Checks
 
-### One-shot setup (install + auth + skills)
-
-```bash
-npx -y @syxs/tavily-cli@latest init --all --yes --api-key "tvly-your-api-key"
-```
-
-### Local development install (if needed)
+1. Confirm the binary is available:
 
 ```bash
-git clone https://github.com/Lag0/tavily-cli.git
-cd tavily-cli
-pnpm install
-pnpm run build
-pnpm link --global
+tavily --help
 ```
 
-## 2) Verify installation and auth
+2. Confirm auth state:
 
 ```bash
 tavily status
 ```
 
-## 3) Authenticate (if needed)
+3. If authentication is missing, authenticate interactively:
 
 ```bash
-tavily login --api-key "tvly-your-api-key"
+tavily login
 ```
 
-Recheck:
-
-```bash
-tavily status
-```
-
-## 4) Install skill and MCP integrations
+4. Configure optional integrations (when needed):
 
 ```bash
 tavily setup skills
 tavily setup mcp
 ```
 
-If `setup skills` fails due to old published version/source mismatch, use direct fallback:
-
-```bash
-npx -y skills add https://github.com/lag0/tavily-cli.git
-```
-
-## 5) Optional local env export
+5. Optional local environment export:
 
 ```bash
 tavily env --file .env --overwrite
-```
-
-## 6) Local uninstall cleanup (for linked local install only)
-
-```bash
-pnpm unlink --global @syxs/tavily-cli
 ```

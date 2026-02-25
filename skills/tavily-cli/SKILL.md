@@ -12,7 +12,6 @@ description: |
   Must be installed and authenticated. See rules/install.md and rules/security.md.
 allowed-tools:
   - Bash(tavily *)
-  - Bash(npx -y @syxs/tavily-cli *)
 ---
 
 # Tavily CLI
@@ -34,7 +33,7 @@ tavily status
 If not authenticated:
 
 ```bash
-tavily login --api-key "tvly-your-api-key"
+tavily login
 ```
 
 If not installed/configured, follow [rules/install.md](rules/install.md).
@@ -224,8 +223,8 @@ Key options: `-o`, `--json`, `--pretty`.
 ### auth and setup commands
 
 ```bash
-# Save credentials
-tavily login --api-key "tvly-your-api-key"
+# Authenticate interactively (never pass secrets as CLI args)
+tavily login
 
 # Check auth/version status
 tavily status
@@ -235,9 +234,6 @@ tavily logout
 
 # Pull key into local .env
 tavily env --file .env --overwrite
-
-# One-shot setup
-tavily init --all --yes --api-key "tvly-your-api-key"
 
 # Install integrations independently
 tavily setup skills
@@ -309,7 +305,7 @@ tavily crawl "https://docs.example.com" --select-paths "/docs" --max-depth 2 --l
 
 ## Failure Handling
 
-- If command fails with auth error: run `tavily status`, then `tavily login --api-key ...`.
+- If command fails with auth error: run `tavily status`, then `tavily login`.
 - If URL extraction fails: inspect `.failedResults` from JSON output and retry only failed URLs.
 - If output is too large: reduce `--limit` / depth and split into multiple focused runs.
 - If parsing JSON outputs: ensure `--json` was used or output file uses `.json` extension.
