@@ -14,7 +14,15 @@ export function parseJsonObject(
 ): Record<string, unknown> | undefined {
   if (!value) return undefined;
 
-  const parsed = JSON.parse(value);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error(
+      'Invalid JSON for --output-schema. Example: --output-schema \'{"field":"value"}\''
+    );
+  }
+
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
     throw new Error('Expected a JSON object.');
   }

@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { handleLoginCommand } from '../../commands/login';
 import { saveCredentials } from '../../utils/credentials';
-import { getApiKey, getApiUrl, updateConfig } from '../../utils/config';
+import { updateConfig } from '../../utils/config';
 
 vi.mock('../../utils/credentials', () => ({
   saveCredentials: vi.fn(),
 }));
 
 vi.mock('../../utils/config', () => ({
-  getApiKey: vi.fn(),
-  getApiUrl: vi.fn(),
   updateConfig: vi.fn(),
 }));
 
@@ -20,9 +18,6 @@ describe('handleLoginCommand', () => {
   });
 
   it('saves provided credentials', async () => {
-    vi.mocked(getApiKey).mockReturnValue('tvly-key');
-    vi.mocked(getApiUrl).mockReturnValue('https://api.tavily.com');
-
     await handleLoginCommand({
       apiKey: 'tvly-key',
       apiUrl: 'https://api.tavily.com',
@@ -38,19 +33,18 @@ describe('handleLoginCommand', () => {
     });
   });
 
-  it('accepts api key resolved from global config', async () => {
-    vi.mocked(getApiKey).mockReturnValue('tvly-key-from-global');
-    vi.mocked(getApiUrl).mockReturnValue('https://api.tavily.com');
+  it('fails when api key is missing', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const exitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation(((code?: string | number | null | undefined) => {
+        throw new Error(`process.exit:${code}`);
+      }) as never);
 
-    await handleLoginCommand({});
+    await expect(handleLoginCommand({})).rejects.toThrow('process.exit:1');
+    expect(errorSpy).toHaveBeenCalledWith('Error: --api-key is required in v1.');
 
-    expect(saveCredentials).toHaveBeenCalledWith({
-      apiKey: 'tvly-key-from-global',
-      apiUrl: 'https://api.tavily.com',
-    });
-    expect(updateConfig).toHaveBeenCalledWith({
-      apiKey: 'tvly-key-from-global',
-      apiUrl: 'https://api.tavily.com',
-    });
+    exitSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 });

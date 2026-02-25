@@ -1,0 +1,110 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const handleSearchCommand = vi.fn();
+const handleExtractCommand = vi.fn();
+const handleCrawlCommand = vi.fn();
+const handleMapCommand = vi.fn();
+const handleResearchCommand = vi.fn();
+const handleResearchStatusCommand = vi.fn();
+const handleLoginCommand = vi.fn();
+const handleLogoutCommand = vi.fn();
+const handleStatusCommand = vi.fn();
+const handleInitCommand = vi.fn();
+const handleSetupCommand = vi.fn();
+const handleEnvPullCommand = vi.fn();
+
+const initializeConfig = vi.fn();
+const updateConfig = vi.fn();
+const validateConfig = vi.fn();
+
+vi.mock('../../commands/search', () => ({ handleSearchCommand }));
+vi.mock('../../commands/extract', () => ({ handleExtractCommand }));
+vi.mock('../../commands/crawl', () => ({ handleCrawlCommand }));
+vi.mock('../../commands/map', () => ({ handleMapCommand }));
+vi.mock('../../commands/research', () => ({
+  handleResearchCommand,
+  handleResearchStatusCommand,
+}));
+vi.mock('../../commands/login', () => ({ handleLoginCommand }));
+vi.mock('../../commands/logout', () => ({ handleLogoutCommand }));
+vi.mock('../../commands/status', () => ({ handleStatusCommand }));
+vi.mock('../../commands/init', () => ({ handleInitCommand }));
+vi.mock('../../commands/setup', () => ({ handleSetupCommand }));
+vi.mock('../../commands/env', () => ({ handleEnvPullCommand }));
+vi.mock('../../utils/config', () => ({
+  initializeConfig,
+  updateConfig,
+  validateConfig,
+}));
+
+async function loadCli() {
+  vi.resetModules();
+  return import('../../index');
+}
+
+function mockProcessExit() {
+  return vi
+    .spyOn(process, 'exit')
+    .mockImplementation(((code?: string | number | null | undefined) => {
+      throw new Error(`process.exit:${code ?? 0}`);
+    }) as never);
+}
+
+describe('CLI integration', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+  });
+
+  it('runs status only through the explicit status command', async () => {
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'status']);
+
+    expect(handleStatusCommand).toHaveBeenCalledTimes(1);
+    expect(handleSearchCommand).not.toHaveBeenCalled();
+  });
+
+  it('routes bare URLs to extract', async () => {
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'docs.tavily.com']);
+
+    expect(handleExtractCommand).toHaveBeenCalledTimes(1);
+    expect(handleExtractCommand).toHaveBeenCalledWith(
+      expect.objectContaining({ urls: ['https://docs.tavily.com'] })
+    );
+  });
+
+  it('resolves login api key from global option parsing', async () => {
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', '--api-key', 'tvly-key', 'login']);
+
+    expect(handleLoginCommand).toHaveBeenCalledWith(
+      expect.objectContaining({ apiKey: 'tvly-key' })
+    );
+  });
+
+  it('rejects invalid numeric options before executing command', async () => {
+    const { runCli } = await loadCli();
+    const exitSpy = mockProcessExit();
+
+    await expect(
+      runCli(['node', 'tavily', 'search', 'hello', '--max-results', 'abc'])
+    ).rejects.toThrow();
+
+    expect(handleSearchCommand).not.toHaveBeenCalled();
+    exitSpy.mockRestore();
+  });
+
+  it('rejects legacy --status on non-status commands', async () => {
+    const { runCli } = await loadCli();
+    const exitSpy = mockProcessExit();
+
+    await expect(
+      runCli(['node', 'tavily', 'search', 'hello', '--status'])
+    ).rejects.toThrow();
+
+    expect(handleStatusCommand).not.toHaveBeenCalled();
+    expect(handleSearchCommand).not.toHaveBeenCalled();
+    exitSpy.mockRestore();
+  });
+});

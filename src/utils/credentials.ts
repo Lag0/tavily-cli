@@ -7,6 +7,8 @@ export interface StoredCredentials {
   apiUrl?: string;
 }
 
+let hasWarnedInvalidCredentials = false;
+
 function getConfigDir(): string {
   const home = os.homedir();
   const platform = os.platform();
@@ -42,8 +44,9 @@ function setSecurePermissions(filePath: string): void {
 }
 
 export function loadCredentials(): StoredCredentials | null {
+  const file = getCredentialsPath();
+
   try {
-    const file = getCredentialsPath();
     if (!fs.existsSync(file)) {
       return null;
     }
@@ -51,6 +54,12 @@ export function loadCredentials(): StoredCredentials | null {
     const raw = fs.readFileSync(file, 'utf-8');
     return JSON.parse(raw) as StoredCredentials;
   } catch {
+    if (!hasWarnedInvalidCredentials) {
+      hasWarnedInvalidCredentials = true;
+      console.error(
+        `Warning: Unable to read credentials at ${file}. Run "tavily logout" then login again.`
+      );
+    }
     return null;
   }
 }

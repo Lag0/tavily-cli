@@ -1,5 +1,5 @@
 import { saveCredentials } from '../utils/credentials';
-import { getApiKey, getApiUrl, updateConfig } from '../utils/config';
+import { updateConfig } from '../utils/config';
 
 export interface LoginOptions {
   apiKey?: string;
@@ -7,8 +7,7 @@ export interface LoginOptions {
 }
 
 export async function handleLoginCommand(options: LoginOptions): Promise<void> {
-  const apiKey = getApiKey(options.apiKey);
-  const apiUrl = getApiUrl(options.apiUrl);
+  const { apiKey, apiUrl } = options;
 
   if (!apiKey) {
     console.error('Error: --api-key is required in v1.');

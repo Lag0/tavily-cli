@@ -27,4 +27,10 @@ describe('parseJsonObject', () => {
   it('throws for non-object JSON', () => {
     expect(() => parseJsonObject('[1,2]')).toThrow('Expected a JSON object.');
   });
+
+  it('throws a clear message for invalid JSON', () => {
+    expect(() => parseJsonObject('{invalid')).toThrow(
+      'Invalid JSON for --output-schema.'
+    );
+  });
 });
