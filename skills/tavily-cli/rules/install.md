@@ -6,7 +6,23 @@ description: |
 
 # Tavily CLI Installation
 
-## Local Install (No npm publish required)
+Use this checklist when `tavily` is missing or not authenticated.
+
+## 1) Install CLI
+
+### Preferred (npm)
+
+```bash
+npm install -g @syxs/tavily-cli@latest
+```
+
+### One-shot setup (install + auth + skills)
+
+```bash
+npx -y @syxs/tavily-cli@latest init --all --yes --api-key "tvly-your-api-key"
+```
+
+### Local development install (if needed)
 
 ```bash
 git clone https://github.com/Lag0/tavily-cli.git
@@ -16,38 +32,45 @@ pnpm run build
 pnpm link --global
 ```
 
-Verify:
+## 2) Verify installation and auth
 
 ```bash
-tavily --status
+tavily status
 ```
 
-Remove local global link:
-
-```bash
-pnpm unlink --global @syxs/tavily-cli
-```
-
-## Quick Setup
-
-```bash
-npx -y @syxs/tavily-cli@latest init --all --yes --api-key "tvly-your-api-key"
-```
-
-## Manual Install
-
-```bash
-npm install -g @syxs/tavily-cli@latest
-```
-
-## Verify
-
-```bash
-tavily --status
-```
-
-## Authenticate
+## 3) Authenticate (if needed)
 
 ```bash
 tavily login --api-key "tvly-your-api-key"
+```
+
+Recheck:
+
+```bash
+tavily status
+```
+
+## 4) Install skill and MCP integrations
+
+```bash
+tavily setup skills
+tavily setup mcp
+```
+
+If `setup skills` fails due to old published version/source mismatch, use direct fallback:
+
+```bash
+npx -y skills add https://github.com/lag0/tavily-cli.git
+```
+
+## 5) Optional local env export
+
+```bash
+tavily env --file .env --overwrite
+```
+
+## 6) Local uninstall cleanup (for linked local install only)
+
+```bash
+pnpm unlink --global @syxs/tavily-cli
 ```
