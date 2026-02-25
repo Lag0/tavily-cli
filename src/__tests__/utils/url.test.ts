@@ -5,6 +5,8 @@ describe('url utils', () => {
   it('detects URLs', () => {
     expect(isUrl('https://example.com')).toBe(true);
     expect(isUrl('example.com')).toBe(true);
+    expect(isUrl('localhost:3000')).toBe(true);
+    expect(isUrl('login')).toBe(false);
     expect(isUrl('not a url')).toBe(false);
   });
 
