@@ -423,7 +423,7 @@ export function createProgram(): Command {
 
   program
     .command('login')
-    .description('Login with Tavily API key')
+    .description('Login with Tavily API key (interactive, env, or --api-key)')
     .option('-k, --api-key <key>', 'Tavily API key')
     .option('--api-url <url>', 'API URL (default: https://api.tavily.com)')
     .action(async (options, command) => {

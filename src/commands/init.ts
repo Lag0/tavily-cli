@@ -1,6 +1,7 @@
 import { getApiKey, updateConfig } from '../utils/config';
 import { saveCredentials } from '../utils/credentials';
 import { runCommandOrExit } from '../utils/process';
+import packageJson from '../../package.json';
 
 export interface InitOptions {
   global?: boolean;
@@ -12,6 +13,9 @@ export interface InitOptions {
   skipAuth?: boolean;
   apiKey?: string;
 }
+
+const SKILLS_NPX_PACKAGE = 'skills@1.4.1';
+const SKILL_SOURCE = `https://github.com/lag0/tavily-cli/tree/v${packageJson.version}`;
 
 export async function handleInitCommand(
   options: InitOptions = {}
@@ -31,7 +35,7 @@ export async function handleInitCommand(
     printStep('Installing @syxs/tavily-cli globally...');
     runCommandOrExit({
       command: 'npm',
-      args: ['install', '-g', '@syxs/tavily-cli'],
+      args: ['install', '-g', `@syxs/tavily-cli@${packageJson.version}`],
       failureMessage: 'Failed to install @syxs/tavily-cli globally',
     });
     console.log('✓ CLI installed\n');
@@ -43,7 +47,7 @@ export async function handleInitCommand(
     const apiKey = options.apiKey || getApiKey();
     if (!apiKey) {
       console.error(
-        'No API key available. Use --api-key in init or run tavily login later.'
+        'No API key available. Set TAVILY_API_KEY, use --api-key in init, or run tavily login later.'
       );
       process.exit(1);
     }
@@ -59,9 +63,9 @@ export async function handleInitCommand(
     const args = [
       'npx',
       '-y',
-      'skills',
+      SKILLS_NPX_PACKAGE,
       'add',
-      'https://github.com/lag0/tavily-cli.git',
+      SKILL_SOURCE,
     ];
     const command = args.shift() as string;
 

@@ -4,3 +4,4 @@ skills
 .claude-plugin
 vitest.config.mjs
 tsconfig.json
+dist/**/*.map

@@ -26,7 +26,7 @@ export async function handleStatusCommand(): Promise<void> {
 
   if (!authenticated) {
     console.log(`  ${red}●${reset} Not authenticated`);
-    console.log(`  ${dim}Run: tavily login --api-key <tvly-key>${reset}\n`);
+    console.log(`  ${dim}Run: tavily login${reset}\n`);
     return;
   }
 

@@ -14,9 +14,7 @@ export async function handleEnvPullCommand(
     const key = getApiKey();
 
     if (!key) {
-      console.error(
-        'No API key found. Run "tavily login --api-key <key>" first.'
-      );
+      console.error('No API key found. Run "tavily login" first.');
       process.exit(1);
     }
 
@@ -43,6 +41,9 @@ export async function handleEnvPullCommand(
     }
 
     fs.writeFileSync(target, content, 'utf-8');
+    if (process.platform !== 'win32') {
+      fs.chmodSync(target, 0o600);
+    }
     console.log(`Updated ${target}`);
   } catch (error) {
     console.error(

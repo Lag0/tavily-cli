@@ -37,7 +37,7 @@ npm install -g @syxs/tavily-cli
 Or run the one-shot setup flow:
 
 ```bash
-npx -y @syxs/tavily-cli@latest init --all --yes --api-key tvly-your-key
+TAVILY_API_KEY=tvly-your-key npx -y @syxs/tavily-cli@latest init --all --yes
 ```
 
 ## Quick Start
@@ -45,7 +45,8 @@ npx -y @syxs/tavily-cli@latest init --all --yes --api-key tvly-your-key
 ```bash
 # Authenticate
 
-tavily login --api-key tvly-your-key
+export TAVILY_API_KEY=tvly-your-key
+tavily login
 
 # Check status
 
@@ -80,7 +81,7 @@ tavily research "Analyze current trends in retrieval-augmented generation" --mod
 - `map <url>`: URL mapping
 - `research <input>`: start research job
 - `research-status <request-id>`: fetch research status/result
-- `login --api-key <key>`: save credentials
+- `login`: save credentials from interactive input or `TAVILY_API_KEY`
 - `logout`: clear saved credentials
 - `status`: auth/version summary
 - `init`: install + auth + skills
@@ -104,8 +105,8 @@ tavily setup mcp
 Equivalent direct commands:
 
 ```bash
-npx skills add https://github.com/lag0/tavily-cli.git
-npx add-mcp "npx -y mcp-remote https://mcp.tavily.com/mcp" --name tavily
+npx skills@1.4.1 add https://github.com/lag0/tavily-cli/tree/v0.1.5
+npx add-mcp@1.2.2 "npx -y mcp-remote@0.1.38 https://mcp.tavily.com/mcp" --name tavily
 ```
 
 ## Environment Variables

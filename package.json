@@ -18,6 +18,8 @@
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "audit:prod": "pnpm audit --prod",
+    "audit:all": "pnpm audit",
     "publish-beta": "npm publish --tag beta",
     "publish-prod": "npm publish --access public"
   },
