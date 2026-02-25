@@ -1,6 +1,6 @@
 {
   "name": "@syxs/tavily-cli",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Unofficial Tavily command-line interface by SYXS. Search, extract, crawl, map, and research directly from your terminal.",
   "main": "dist/index.js",
   "bin": {
