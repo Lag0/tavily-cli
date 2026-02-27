@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_for_next_phase
-last_updated: "2026-02-27T19:40:00.000Z"
+status: executing_phase
+last_updated: "2026-02-27T17:31:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 12
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # Project State
@@ -23,16 +23,16 @@ See: .planning/PROJECT.md (updated 2026-02-27)
 ## Current Position
 
 Phase: 4 of 4 (Release Hardening and Auto-Remediation)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-02-27 - Phase 3 completed and verified
+Plan: 04-02 (pending)
+Status: Wave 1 complete; preparing wave 2 execution
+Last activity: 2026-02-27 - Completed 04-01 doctor safe-fix implementation
 
-Progress: [████████░░] 75%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 7 min
 - Total execution time: 1.0 hours
 
@@ -43,9 +43,10 @@ Progress: [████████░░] 75%
 | 1 | 3 | 20 min | 7 min |
 | 2 | 3 | 27 min | 9 min |
 | 3 | 3 | 15 min | 5 min |
+| 4 | 1 | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 9 min, 10 min, 4 min, 5 min, 6 min
+- Last 5 plans: 8 min, 9 min, 10 min, 4 min, 5 min
 - Trend: Stable
 
 ## Accumulated Context
@@ -64,6 +65,7 @@ Recent decisions affecting current work:
 - [Phase 03]: Standardized runtime CLI errors through one renderer and classifier boundary — Ensures deterministic error shape/remediation across all commands before typed-adapter refactor.
 - [Phase 03]: Adopted shared typed Tavily request adapters across web commands to remove payload `as any` casts.
 - [Phase 03]: Added dedicated CLI routing/parser regression matrices and verified full reliability gates (`test`, `type-check`, `build`).
+- [Phase 04]: Added allowlisted `doctor --fix` actions with scoped check selection, dry-run preview, and deterministic post-fix reporting.
 
 ### Pending Todos
 
