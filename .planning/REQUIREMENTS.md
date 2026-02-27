@@ -16,8 +16,8 @@ Requirements for the 1-week reliability/refactor milestone.
 
 ### Reliability
 
-- [ ] **RELI-01**: User receives standardized error output format across all commands (clear code, cause, suggested action).
-- [ ] **RELI-02**: User receives specific handling for Tavily API/network failures, including retry guidance.
+- [x] **RELI-01**: User receives standardized error output format across all commands (clear code, cause, suggested action).
+- [x] **RELI-02**: User receives specific handling for Tavily API/network failures, including retry guidance.
 - [x] **RELI-03**: User gets consistent non-zero exit behavior from CLI boundary, without deep module exits causing unpredictable flows.
 - [ ] **RELI-04**: User can trust command stability through added smoke/integration coverage over critical command paths.
 
@@ -64,8 +64,8 @@ Explicitly excluded from v1.
 | DIAG-02 | Phase 2 | Complete |
 | DIAG-03 | Phase 2 | Complete |
 | DIAG-04 | Phase 4 | Pending |
-| RELI-01 | Phase 3 | Pending |
-| RELI-02 | Phase 3 | Pending |
+| RELI-01 | Phase 3 | Complete |
+| RELI-02 | Phase 3 | Complete |
 | RELI-03 | Phase 1 | Complete |
 | RELI-04 | Phase 4 | Pending |
 | ARCH-01 | Phase 1 | Complete |
@@ -83,4 +83,4 @@ Explicitly excluded from v1.
 
 ---
 *Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after phase 2 completion*
+*Last updated: 2026-02-27 after phase 3 plan 03-01 completion*
