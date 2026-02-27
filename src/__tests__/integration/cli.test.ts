@@ -113,6 +113,28 @@ describe('CLI integration', () => {
     });
   });
 
+  it('preserves zero exit code when doctor diagnostics pass', async () => {
+    handleDoctorCommand.mockImplementationOnce(async () => {
+      process.exitCode = 0;
+    });
+
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'doctor']);
+
+    expect(process.exitCode).toBe(0);
+  });
+
+  it('propagates non-zero exit code when doctor diagnostics fail', async () => {
+    handleDoctorCommand.mockImplementationOnce(async () => {
+      process.exitCode = 1;
+    });
+
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'doctor']);
+
+    expect(process.exitCode).toBe(1);
+  });
+
   it('rejects invalid numeric options before executing command', async () => {
     const { runCli } = await loadCli();
     await runCli(['node', 'tavily', 'search', 'hello', '--max-results', 'abc']);
