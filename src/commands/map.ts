@@ -1,6 +1,7 @@
 import type { MapOptions } from '../types/map';
 import { getClient } from '../utils/client';
-import { writeObjectOutput } from '../utils/output';
+import { writeCommandOutput } from './runtime/command-context';
+import { withCommandHandler } from './runtime/with-command-handler';
 
 function formatMapReadable(result: any): string {
   const lines: string[] = [];
@@ -37,19 +38,21 @@ export async function executeMap(options: MapOptions): Promise<any> {
 }
 
 export async function handleMapCommand(options: MapOptions): Promise<void> {
-  try {
-    const result = await executeMap(options);
+  await withCommandHandler(options, async (context) => {
+    const result = await context.client.map(options.url, {
+      maxDepth: options.maxDepth,
+      maxBreadth: options.maxBreadth,
+      limit: options.limit,
+      selectPaths: options.selectPaths,
+      selectDomains: options.selectDomains,
+      excludePaths: options.excludePaths,
+      excludeDomains: options.excludeDomains,
+      allowExternal: options.allowExternal,
+      instructions: options.instructions,
+      timeout: options.timeout,
+      includeUsage: options.includeUsage,
+    } as any);
 
-    if (options.json || options.output?.toLowerCase().endsWith('.json')) {
-      writeObjectOutput(result, options);
-      return;
-    }
-
-    writeObjectOutput(formatMapReadable(result), options);
-  } catch (error) {
-    console.error(
-      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
-  }
+    writeCommandOutput(context, result, formatMapReadable);
+  });
 }

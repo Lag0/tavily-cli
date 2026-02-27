@@ -1,6 +1,8 @@
 import type { ResearchOptions, ResearchStatusOptions } from '../types/research';
 import { getClient } from '../utils/client';
 import { writeObjectOutput } from '../utils/output';
+import { writeCommandOutput } from './runtime/command-context';
+import { withCommandHandler } from './runtime/with-command-handler';
 
 function formatResearchReadable(result: any): string {
   const lines: string[] = [];
@@ -43,8 +45,14 @@ export async function executeResearchStatus(
 export async function handleResearchCommand(
   options: ResearchOptions
 ): Promise<void> {
-  try {
-    const result = await executeResearch(options);
+  await withCommandHandler(options, async (context) => {
+    const result = await context.client.research(options.input, {
+      model: options.model,
+      citationFormat: options.citationFormat,
+      timeout: options.timeout,
+      stream: options.stream,
+      outputSchema: options.outputSchema,
+    } as any);
 
     if (options.stream) {
       const chunks: string[] = [];
@@ -55,36 +63,15 @@ export async function handleResearchCommand(
       return;
     }
 
-    if (options.json || options.output?.toLowerCase().endsWith('.json')) {
-      writeObjectOutput(result, options);
-      return;
-    }
-
-    writeObjectOutput(formatResearchReadable(result), options);
-  } catch (error) {
-    console.error(
-      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
-  }
+    writeCommandOutput(context, result, formatResearchReadable);
+  });
 }
 
 export async function handleResearchStatusCommand(
   options: ResearchStatusOptions
 ): Promise<void> {
-  try {
-    const result = await executeResearchStatus(options);
-
-    if (options.json || options.output?.toLowerCase().endsWith('.json')) {
-      writeObjectOutput(result, options);
-      return;
-    }
-
-    writeObjectOutput(formatResearchReadable(result), options);
-  } catch (error) {
-    console.error(
-      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
-  }
+  await withCommandHandler(options, async (context) => {
+    const result = await context.client.getResearch(options.requestId);
+    writeCommandOutput(context, result, formatResearchReadable);
+  });
 }

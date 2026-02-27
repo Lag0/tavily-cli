@@ -1,6 +1,7 @@
 import type { ExtractOptions } from '../types/extract';
 import { getClient } from '../utils/client';
-import { writeObjectOutput } from '../utils/output';
+import { writeCommandOutput } from './runtime/command-context';
+import { withCommandHandler } from './runtime/with-command-handler';
 
 function formatExtractReadable(result: any): string {
   const lines: string[] = [];
@@ -43,19 +44,18 @@ export async function executeExtract(options: ExtractOptions): Promise<any> {
 export async function handleExtractCommand(
   options: ExtractOptions
 ): Promise<void> {
-  try {
-    const result = await executeExtract(options);
+  await withCommandHandler(options, async (context) => {
+    const result = await context.client.extract(options.urls, {
+      extractDepth: options.extractDepth,
+      format: options.format,
+      includeImages: options.includeImages,
+      includeFavicon: options.includeFavicon,
+      includeUsage: options.includeUsage,
+      timeout: options.timeout,
+      query: options.query,
+      chunksPerSource: options.chunksPerSource,
+    } as any);
 
-    if (options.json || options.output?.toLowerCase().endsWith('.json')) {
-      writeObjectOutput(result, options);
-      return;
-    }
-
-    writeObjectOutput(formatExtractReadable(result), options);
-  } catch (error) {
-    console.error(
-      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
-  }
+    writeCommandOutput(context, result, formatExtractReadable);
+  });
 }

@@ -1,6 +1,7 @@
 import type { SearchOptions } from '../types/search';
 import { getClient } from '../utils/client';
-import { writeObjectOutput } from '../utils/output';
+import { writeCommandOutput } from './runtime/command-context';
+import { withCommandHandler } from './runtime/with-command-handler';
 
 function formatSearchReadable(result: any): string {
   const lines: string[] = [];
@@ -61,19 +62,25 @@ export async function executeSearch(options: SearchOptions): Promise<any> {
 export async function handleSearchCommand(
   options: SearchOptions
 ): Promise<void> {
-  try {
-    const result = await executeSearch(options);
+  await withCommandHandler(options, async (context) => {
+    const result = await context.client.search(options.query, {
+      maxResults: options.maxResults,
+      searchDepth: options.searchDepth,
+      topic: options.topic,
+      timeRange: options.timeRange,
+      startDate: options.startDate,
+      endDate: options.endDate,
+      includeDomains: options.includeDomains,
+      excludeDomains: options.excludeDomains,
+      country: options.country,
+      includeRawContent: options.includeRawContent,
+      includeImages: options.includeImages,
+      includeImageDescriptions: options.includeImageDescriptions,
+      includeAnswer: options.includeAnswer,
+      includeFavicon: options.includeFavicon,
+      includeUsage: options.includeUsage,
+    } as any);
 
-    if (options.json || options.output?.toLowerCase().endsWith('.json')) {
-      writeObjectOutput(result, options);
-      return;
-    }
-
-    writeObjectOutput(formatSearchReadable(result), options);
-  } catch (error) {
-    console.error(
-      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
-  }
+    writeCommandOutput(context, result, formatSearchReadable);
+  });
 }

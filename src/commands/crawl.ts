@@ -1,6 +1,7 @@
 import type { CrawlOptions } from '../types/crawl';
 import { getClient } from '../utils/client';
-import { writeObjectOutput } from '../utils/output';
+import { writeCommandOutput } from './runtime/command-context';
+import { withCommandHandler } from './runtime/with-command-handler';
 
 function formatCrawlReadable(result: any): string {
   const lines: string[] = [];
@@ -42,19 +43,26 @@ export async function executeCrawl(options: CrawlOptions): Promise<any> {
 }
 
 export async function handleCrawlCommand(options: CrawlOptions): Promise<void> {
-  try {
-    const result = await executeCrawl(options);
+  await withCommandHandler(options, async (context) => {
+    const result = await context.client.crawl(options.url, {
+      maxDepth: options.maxDepth,
+      maxBreadth: options.maxBreadth,
+      limit: options.limit,
+      extractDepth: options.extractDepth,
+      selectPaths: options.selectPaths,
+      selectDomains: options.selectDomains,
+      excludePaths: options.excludePaths,
+      excludeDomains: options.excludeDomains,
+      allowExternal: options.allowExternal,
+      includeImages: options.includeImages,
+      instructions: options.instructions,
+      format: options.format,
+      timeout: options.timeout,
+      includeFavicon: options.includeFavicon,
+      includeUsage: options.includeUsage,
+      chunksPerSource: options.chunksPerSource,
+    } as any);
 
-    if (options.json || options.output?.toLowerCase().endsWith('.json')) {
-      writeObjectOutput(result, options);
-      return;
-    }
-
-    writeObjectOutput(formatCrawlReadable(result), options);
-  } catch (error) {
-    console.error(
-      `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
-  }
+    writeCommandOutput(context, result, formatCrawlReadable);
+  });
 }
