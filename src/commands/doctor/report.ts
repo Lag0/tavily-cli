@@ -1,0 +1,76 @@
+import type { DoctorCheckResult, DoctorCheckStatus } from './checks';
+
+export type DoctorOverallStatus = DoctorCheckStatus;
+
+export interface DoctorSummary {
+  total: number;
+  passed: number;
+  warned: number;
+  failed: number;
+  requiredFailures: number;
+}
+
+export interface DoctorReport {
+  schemaVersion: '1.0';
+  generatedAt: string;
+  overallStatus: DoctorOverallStatus;
+  summary: DoctorSummary;
+  checks: DoctorCheckResult[];
+}
+
+function getOverallStatus(summary: DoctorSummary): DoctorOverallStatus {
+  if (summary.failed > 0) return 'fail';
+  if (summary.warned > 0) return 'warn';
+  return 'pass';
+}
+
+function countStatuses(checks: DoctorCheckResult[], status: DoctorCheckStatus): number {
+  return checks.filter((check) => check.status === status).length;
+}
+
+export function buildDoctorReport(
+  checks: DoctorCheckResult[],
+  generatedAt = new Date().toISOString()
+): DoctorReport {
+  const summary: DoctorSummary = {
+    total: checks.length,
+    passed: countStatuses(checks, 'pass'),
+    warned: countStatuses(checks, 'warn'),
+    failed: countStatuses(checks, 'fail'),
+    requiredFailures: checks.filter((check) => check.required && check.status === 'fail').length,
+  };
+
+  return {
+    schemaVersion: '1.0',
+    generatedAt,
+    overallStatus: getOverallStatus(summary),
+    summary,
+    checks,
+  };
+}
+
+function statusLabel(status: DoctorCheckStatus): string {
+  if (status === 'pass') return 'PASS';
+  if (status === 'warn') return 'WARN';
+  return 'FAIL';
+}
+
+export function renderDoctorTextReport(report: DoctorReport): string {
+  const lines: string[] = [];
+
+  lines.push('Tavily Doctor');
+  lines.push(`Overall status: ${statusLabel(report.overallStatus)}`);
+  lines.push(
+    `Checks: ${report.summary.total} total (${report.summary.passed} pass, ${report.summary.warned} warn, ${report.summary.failed} fail)`
+  );
+  lines.push('');
+
+  for (const check of report.checks) {
+    lines.push(`[${statusLabel(check.status)}] ${check.id} - ${check.message}`);
+    if (check.remediation) {
+      lines.push(`  Remediation: ${check.remediation}`);
+    }
+  }
+
+  return lines.join('\n');
+}
