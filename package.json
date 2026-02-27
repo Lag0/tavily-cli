@@ -17,6 +17,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,json}\" \"*.{json,md}\"",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
+    "smoke": "node scripts/release/smoke.mjs",
     "test:watch": "vitest",
     "audit:prod": "pnpm audit --prod",
     "audit:all": "pnpm audit",
