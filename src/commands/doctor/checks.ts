@@ -1,5 +1,6 @@
 import { constants as fsConstants, existsSync, readFileSync } from 'fs';
 import { accessSync } from 'fs';
+import { spawnSync } from 'child_process';
 import * as path from 'path';
 import { getConfigDirectoryPath, loadCredentials } from '../../utils/credentials';
 
@@ -52,6 +53,14 @@ interface ApiUrlAssessment {
   hostname?: string;
   trustedHost?: boolean;
   secureProtocol?: boolean;
+}
+
+interface ExecutableProbe {
+  command: string;
+  executable: string;
+  available: boolean;
+  version?: string;
+  error?: string;
 }
 
 function isLocalHost(hostname: string): boolean {
@@ -303,6 +312,149 @@ function buildApiUrlTrustCheck(context: DoctorCheckContext): DoctorCheckResult {
   };
 }
 
+function resolveExecutable(command: string): string {
+  return process.platform === 'win32' ? `${command}.cmd` : command;
+}
+
+function probeExecutable(command: string): ExecutableProbe {
+  const executable = resolveExecutable(command);
+  const result = spawnSync(executable, ['--version'], {
+    encoding: 'utf-8',
+    shell: false,
+  });
+
+  if (result.error) {
+    const errorMessage =
+      (result.error as NodeJS.ErrnoException).code || result.error.message;
+    return {
+      command,
+      executable,
+      available: false,
+      error: errorMessage,
+    };
+  }
+
+  if (result.status !== 0) {
+    return {
+      command,
+      executable,
+      available: false,
+      error: `exit_code_${result.status ?? 1}`,
+    };
+  }
+
+  const rawVersion = result.stdout?.toString().trim() || '';
+
+  return {
+    command,
+    executable,
+    available: true,
+    version: rawVersion.split('\n')[0] || 'unknown',
+  };
+}
+
+function buildDependencyCheck(command: 'node' | 'npm' | 'npx'): DoctorCheckResult {
+  const probe = probeExecutable(command);
+
+  if (!probe.available) {
+    return {
+      id: `deps.${command}`,
+      category: 'dependency',
+      required: true,
+      status: 'fail',
+      message: `${command} is not available on PATH.`,
+      remediation:
+        'Install Node.js LTS and verify the command is available from your shell PATH.',
+      details: probe,
+    };
+  }
+
+  return {
+    id: `deps.${command}`,
+    category: 'dependency',
+    required: true,
+    status: 'pass',
+    message: `${command} is available (${probe.version}).`,
+    details: probe,
+  };
+}
+
+function buildSkillsReadinessCheck(): DoctorCheckResult {
+  const nodeProbe = probeExecutable('node');
+  const npxProbe = probeExecutable('npx');
+  const missing = [nodeProbe, npxProbe]
+    .filter((probe) => !probe.available)
+    .map((probe) => probe.command);
+
+  if (missing.length > 0) {
+    return {
+      id: 'setup.skills_readiness',
+      category: 'setup',
+      required: true,
+      status: 'fail',
+      message: `Setup prerequisites for \"tavily setup skills\" are missing: ${missing.join(', ')}.`,
+      remediation:
+        'Install Node.js LTS (includes npm/npx), restart your shell, then rerun doctor.',
+      details: {
+        required: ['node', 'npx'],
+        missing,
+        probes: [nodeProbe, npxProbe],
+      },
+    };
+  }
+
+  return {
+    id: 'setup.skills_readiness',
+    category: 'setup',
+    required: true,
+    status: 'pass',
+    message: 'Setup prerequisites for \"tavily setup skills\" are satisfied.',
+    details: {
+      required: ['node', 'npx'],
+      missing: [],
+      probes: [nodeProbe, npxProbe],
+    },
+  };
+}
+
+function buildMcpReadinessCheck(): DoctorCheckResult {
+  const nodeProbe = probeExecutable('node');
+  const npxProbe = probeExecutable('npx');
+  const missing = [nodeProbe, npxProbe]
+    .filter((probe) => !probe.available)
+    .map((probe) => probe.command);
+
+  if (missing.length > 0) {
+    return {
+      id: 'setup.mcp_readiness',
+      category: 'setup',
+      required: true,
+      status: 'fail',
+      message: `Setup prerequisites for \"tavily setup mcp\" are missing: ${missing.join(', ')}.`,
+      remediation:
+        'Install Node.js LTS (includes npm/npx), restart your shell, then rerun doctor.',
+      details: {
+        required: ['node', 'npx'],
+        missing,
+        probes: [nodeProbe, npxProbe],
+      },
+    };
+  }
+
+  return {
+    id: 'setup.mcp_readiness',
+    category: 'setup',
+    required: true,
+    status: 'pass',
+    message: 'Setup prerequisites for \"tavily setup mcp\" are satisfied.',
+    details: {
+      required: ['node', 'npx'],
+      missing: [],
+      probes: [nodeProbe, npxProbe],
+    },
+  };
+}
+
 const defaultChecks: DoctorCheck[] = [
   {
     id: 'auth.api_key_resolution',
@@ -342,6 +494,86 @@ const defaultChecks: DoctorCheck[] = [
     required: true,
     run: (context) => {
       const result = buildApiUrlTrustCheck(context);
+      return {
+        category: result.category,
+        required: result.required,
+        status: result.status,
+        message: result.message,
+        remediation: result.remediation,
+        details: result.details,
+      };
+    },
+  },
+  {
+    id: 'deps.node',
+    category: 'dependency',
+    required: true,
+    run: () => {
+      const result = buildDependencyCheck('node');
+      return {
+        category: result.category,
+        required: result.required,
+        status: result.status,
+        message: result.message,
+        remediation: result.remediation,
+        details: result.details,
+      };
+    },
+  },
+  {
+    id: 'deps.npm',
+    category: 'dependency',
+    required: true,
+    run: () => {
+      const result = buildDependencyCheck('npm');
+      return {
+        category: result.category,
+        required: result.required,
+        status: result.status,
+        message: result.message,
+        remediation: result.remediation,
+        details: result.details,
+      };
+    },
+  },
+  {
+    id: 'deps.npx',
+    category: 'dependency',
+    required: true,
+    run: () => {
+      const result = buildDependencyCheck('npx');
+      return {
+        category: result.category,
+        required: result.required,
+        status: result.status,
+        message: result.message,
+        remediation: result.remediation,
+        details: result.details,
+      };
+    },
+  },
+  {
+    id: 'setup.skills_readiness',
+    category: 'setup',
+    required: true,
+    run: () => {
+      const result = buildSkillsReadinessCheck();
+      return {
+        category: result.category,
+        required: result.required,
+        status: result.status,
+        message: result.message,
+        remediation: result.remediation,
+        details: result.details,
+      };
+    },
+  },
+  {
+    id: 'setup.mcp_readiness',
+    category: 'setup',
+    required: true,
+    run: () => {
+      const result = buildMcpReadinessCheck();
       return {
         category: result.category,
         required: result.required,

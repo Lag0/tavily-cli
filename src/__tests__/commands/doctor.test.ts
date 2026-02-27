@@ -1,9 +1,16 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { spawnSync } from 'child_process';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runDoctorChecks } from '../../commands/doctor/checks';
+import { buildDoctorCommandReport } from '../../commands/doctor';
+import { renderDoctorTextReport } from '../../commands/doctor/report';
 import { getConfigDirectoryPath, loadCredentials } from '../../utils/credentials';
+
+vi.mock('child_process', () => ({
+  spawnSync: vi.fn(),
+}));
 
 vi.mock('../../utils/credentials', () => ({
   loadCredentials: vi.fn(),
@@ -32,6 +39,18 @@ describe('doctor checks (auth and trust)', () => {
 
     vi.mocked(getConfigDirectoryPath).mockReturnValue(tempDir);
     vi.mocked(loadCredentials).mockReturnValue(null);
+    vi.mocked(spawnSync).mockImplementation((command) => {
+      const rawCommand = String(command);
+      const normalized = rawCommand.endsWith('.cmd')
+        ? rawCommand.slice(0, -4)
+        : rawCommand;
+
+      return {
+        status: 0,
+        stdout: `${normalized}-v1.0.0\n`,
+        stderr: '',
+      } as any;
+    });
   });
 
   afterEach(() => {
@@ -79,5 +98,54 @@ describe('doctor checks (auth and trust)', () => {
 
     expect(apiUrlCheck.status).toBe('warn');
     expect(apiUrlCheck.message).toContain('untrusted API host');
+  });
+
+  it('passes dependency and setup checks when required executables are available', async () => {
+    const checks = await runDoctorChecks();
+
+    expect(getCheck(checks, 'deps.node').status).toBe('pass');
+    expect(getCheck(checks, 'deps.npm').status).toBe('pass');
+    expect(getCheck(checks, 'deps.npx').status).toBe('pass');
+    expect(getCheck(checks, 'setup.skills_readiness').status).toBe('pass');
+    expect(getCheck(checks, 'setup.mcp_readiness').status).toBe('pass');
+  });
+
+  it('fails dependency and setup checks when npx is unavailable', async () => {
+    vi.mocked(spawnSync).mockImplementation((command) => {
+      const rawCommand = String(command);
+      const normalized = rawCommand.endsWith('.cmd')
+        ? rawCommand.slice(0, -4)
+        : rawCommand;
+
+      if (normalized === 'npx') {
+        return {
+          status: null,
+          stdout: '',
+          stderr: '',
+          error: Object.assign(new Error('not found'), { code: 'ENOENT' }),
+        } as any;
+      }
+
+      return {
+        status: 0,
+        stdout: `${normalized}-v1.0.0\n`,
+        stderr: '',
+      } as any;
+    });
+
+    const checks = await runDoctorChecks();
+
+    expect(getCheck(checks, 'deps.npx').status).toBe('fail');
+    expect(getCheck(checks, 'setup.skills_readiness').status).toBe('fail');
+    expect(getCheck(checks, 'setup.mcp_readiness').status).toBe('fail');
+  });
+
+  it('renders dependency and setup diagnostics in command-level text output', async () => {
+    const report = await buildDoctorCommandReport();
+    const output = renderDoctorTextReport(report);
+
+    expect(output).toContain('deps.node');
+    expect(output).toContain('setup.skills_readiness');
+    expect(output).toContain('setup.mcp_readiness');
   });
 });

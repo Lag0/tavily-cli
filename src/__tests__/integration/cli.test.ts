@@ -101,6 +101,18 @@ describe('CLI integration', () => {
     });
   });
 
+  it('passes doctor output path options through tooling registrar', async () => {
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'doctor', '--output', '.tavily/doctor.json']);
+
+    expect(handleDoctorCommand).toHaveBeenCalledTimes(1);
+    expect(handleDoctorCommand).toHaveBeenCalledWith({
+      output: '.tavily/doctor.json',
+      json: false,
+      pretty: false,
+    });
+  });
+
   it('rejects invalid numeric options before executing command', async () => {
     const { runCli } = await loadCli();
     await runCli(['node', 'tavily', 'search', 'hello', '--max-results', 'abc']);
