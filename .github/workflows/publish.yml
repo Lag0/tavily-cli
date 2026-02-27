@@ -52,6 +52,9 @@ jobs:
       - name: Build project
         run: pnpm run build
 
+      - name: Release smoke
+        run: pnpm run smoke
+
       - name: Check version and tag
         id: check-version
         run: |

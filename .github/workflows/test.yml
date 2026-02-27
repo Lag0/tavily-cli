@@ -34,8 +34,11 @@ jobs:
       - name: Type check
         run: pnpm run type-check
 
+      - name: Run tests
+        run: pnpm run test
+
       - name: Build
         run: pnpm run build
 
-      - name: Run tests
-        run: pnpm run test
+      - name: Release smoke
+        run: pnpm run smoke
