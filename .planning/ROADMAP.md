@@ -44,7 +44,7 @@ Plans:
 
 Plans:
 - [x] 02-01: Implement doctor command scaffolding and check framework
-- [ ] 02-02: Add environment/dependency/setup checks with actionable guidance
+- [x] 02-02: Add environment/dependency/setup checks with actionable guidance
 - [ ] 02-03: Implement JSON reporting and deterministic exit code strategy
 
 ### Phase 3: Reliability and Type-Safe Contracts
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Architecture Baseline Refactor | 3/3 | Complete    | 2026-02-27 |
-| 2. Diagnostics Command Foundation | 1/3 | In Progress|  |
+| 2. Diagnostics Command Foundation | 2/3 | In Progress|  |
 | 3. Reliability and Type-Safe Contracts | 0/3 | Not started | - |
 | 4. Release Hardening and Auto-Remediation | 0/3 | Not started | - |
