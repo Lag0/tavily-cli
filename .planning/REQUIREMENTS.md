@@ -31,8 +31,8 @@ Requirements for the 1-week reliability/refactor milestone.
 ### Release Hardening
 
 - [ ] **REL-01**: Release pipeline blocks publish when type-check, tests, build, or smoke gates fail.
-- [ ] **REL-02**: Release documentation includes migration notes for intentional breaking changes.
-- [ ] **REL-03**: Team can execute a repeatable release checklist within the 1-week delivery cycle.
+- [x] **REL-02**: Release documentation includes migration notes for intentional breaking changes.
+- [x] **REL-03**: Team can execute a repeatable release checklist within the 1-week delivery cycle.
 
 ## v2 Requirements
 
@@ -49,38 +49,40 @@ Deferred to v1.1 (automation execution workflows).
 
 Explicitly excluded from v1.
 
-| Feature | Reason |
-|---------|--------|
-| Full backward compatibility for every legacy flag/behavior | Team accepted breaking changes to maximize correctness and maintainability |
-| Interactive TUI/GUI interface | Not required for reliability-first CLI milestone |
-| Plugin marketplace/extension framework | Valuable but out of 1-week scope |
-| v1.1 automation command surface (`batch`, workflow orchestration) | Deferred to next milestone after reliability baseline |
+| Feature                                                           | Reason                                                                     |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Full backward compatibility for every legacy flag/behavior        | Team accepted breaking changes to maximize correctness and maintainability |
+| Interactive TUI/GUI interface                                     | Not required for reliability-first CLI milestone                           |
+| Plugin marketplace/extension framework                            | Valuable but out of 1-week scope                                           |
+| v1.1 automation command surface (`batch`, workflow orchestration) | Deferred to next milestone after reliability baseline                      |
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| DIAG-01 | Phase 2 | Complete |
-| DIAG-02 | Phase 2 | Complete |
-| DIAG-03 | Phase 2 | Complete |
-| DIAG-04 | Phase 4 | Pending |
-| RELI-01 | Phase 3 | Complete |
-| RELI-02 | Phase 3 | Complete |
-| RELI-03 | Phase 1 | Complete |
-| RELI-04 | Phase 4 | Pending |
-| ARCH-01 | Phase 1 | Complete |
-| ARCH-02 | Phase 3 | Complete |
-| ARCH-03 | Phase 1 | Complete |
-| ARCH-04 | Phase 3 | Complete |
-| REL-01 | Phase 4 | Pending |
-| REL-02 | Phase 4 | Pending |
-| REL-03 | Phase 4 | Pending |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| DIAG-01     | Phase 2 | Complete |
+| DIAG-02     | Phase 2 | Complete |
+| DIAG-03     | Phase 2 | Complete |
+| DIAG-04     | Phase 4 | Pending  |
+| RELI-01     | Phase 3 | Complete |
+| RELI-02     | Phase 3 | Complete |
+| RELI-03     | Phase 1 | Complete |
+| RELI-04     | Phase 4 | Pending  |
+| ARCH-01     | Phase 1 | Complete |
+| ARCH-02     | Phase 3 | Complete |
+| ARCH-03     | Phase 1 | Complete |
+| ARCH-04     | Phase 3 | Complete |
+| REL-01      | Phase 4 | Pending  |
+| REL-02      | Phase 4 | Complete |
+| REL-03      | Phase 4 | Complete |
 
 **Coverage:**
+
 - v1 requirements: 15 total
 - Mapped to phases: 15
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after phase 3 completion*
+
+_Requirements defined: 2026-02-27_
+_Last updated: 2026-02-27 after phase 3 completion_

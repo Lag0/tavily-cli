@@ -158,6 +158,12 @@ pnpm run test
 pnpm run smoke
 ```
 
+Release preflight gate chain:
+
+```bash
+pnpm run type-check && pnpm run test && pnpm run build && pnpm run smoke
+```
+
 ## Migration and Release Docs
 
 - [Migration Guide](./docs/migration.md)
