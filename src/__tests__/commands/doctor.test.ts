@@ -4,9 +4,10 @@ import * as path from 'path';
 import { spawnSync } from 'child_process';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runDoctorChecks } from '../../commands/doctor/checks';
-import { buildDoctorCommandReport } from '../../commands/doctor';
+import { buildDoctorCommandReport, handleDoctorCommand } from '../../commands/doctor';
 import { renderDoctorTextReport } from '../../commands/doctor/report';
 import { getConfigDirectoryPath, loadCredentials } from '../../utils/credentials';
+import * as outputUtils from '../../utils/output';
 
 vi.mock('child_process', () => ({
   spawnSync: vi.fn(),
@@ -147,5 +148,74 @@ describe('doctor checks (auth and trust)', () => {
     expect(output).toContain('deps.node');
     expect(output).toContain('setup.skills_readiness');
     expect(output).toContain('setup.mcp_readiness');
+  });
+
+  it('emits a stable doctor JSON schema contract', async () => {
+    const report = await buildDoctorCommandReport();
+
+    expect(report).toEqual(
+      expect.objectContaining({
+        schemaVersion: '1.0',
+        metadata: expect.objectContaining({
+          command: 'doctor',
+          generatedAt: expect.any(String),
+        }),
+        overallStatus: expect.stringMatching(/^(pass|warn|fail)$/),
+        summary: expect.objectContaining({
+          total: expect.any(Number),
+          passed: expect.any(Number),
+          warned: expect.any(Number),
+          failed: expect.any(Number),
+          requiredFailures: expect.any(Number),
+        }),
+        checks: expect.any(Array),
+      })
+    );
+
+    for (const check of report.checks) {
+      expect(check).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          category: expect.stringMatching(/^(auth|api-url|dependency|setup)$/),
+          status: expect.stringMatching(/^(pass|warn|fail)$/),
+          required: expect.any(Boolean),
+          message: expect.any(String),
+        })
+      );
+    }
+  });
+
+  it('sets success exit code when diagnostics do not have required failures', async () => {
+    const writeSpy = vi
+      .spyOn(outputUtils, 'writeObjectOutput')
+      .mockImplementation(() => {});
+
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+    process.exitCode = 99;
+
+    await handleDoctorCommand({ json: true });
+
+    expect(writeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        schemaVersion: '1.0',
+      }),
+      expect.objectContaining({ json: true })
+    );
+    expect(process.exitCode).toBe(0);
+  });
+
+  it('sets failing exit code when required diagnostics fail', async () => {
+    const writeSpy = vi
+      .spyOn(outputUtils, 'writeObjectOutput')
+      .mockImplementation(() => {});
+
+    delete process.env.TAVILY_API_KEY;
+    vi.mocked(loadCredentials).mockReturnValue(null);
+    process.exitCode = 0;
+
+    await handleDoctorCommand({ json: true });
+
+    expect(writeSpy).toHaveBeenCalledTimes(1);
+    expect(process.exitCode).toBe(1);
   });
 });

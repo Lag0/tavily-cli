@@ -10,9 +10,14 @@ export interface DoctorSummary {
   requiredFailures: number;
 }
 
+export interface DoctorMetadata {
+  command: 'doctor';
+  generatedAt: string;
+}
+
 export interface DoctorReport {
   schemaVersion: '1.0';
-  generatedAt: string;
+  metadata: DoctorMetadata;
   overallStatus: DoctorOverallStatus;
   summary: DoctorSummary;
   checks: DoctorCheckResult[];
@@ -42,7 +47,10 @@ export function buildDoctorReport(
 
   return {
     schemaVersion: '1.0',
-    generatedAt,
+    metadata: {
+      command: 'doctor',
+      generatedAt,
+    },
     overallStatus: getOverallStatus(summary),
     summary,
     checks,
