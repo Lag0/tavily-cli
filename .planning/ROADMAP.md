@@ -76,7 +76,7 @@ Plans:
 
 Plans:
 - [x] 04-01: Implement doctor fix-actions with safety guards
-- [ ] 04-02: Add smoke/release quality gates to CI/publish flow
+- [x] 04-02: Add smoke/release quality gates to CI/publish flow
 - [ ] 04-03: Publish migration notes and release checklist artifacts
 
 ## Progress
@@ -89,4 +89,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Architecture Baseline Refactor | 3/3 | Complete    | 2026-02-27 |
 | 2. Diagnostics Command Foundation | 3/3 | Complete    | 2026-02-27 |
 | 3. Reliability and Type-Safe Contracts | 3/3 | Complete | 2026-02-27 |
-| 4. Release Hardening and Auto-Remediation | 1/3 | In Progress|  |
+| 4. Release Hardening and Auto-Remediation | 2/3 | In Progress|  |
