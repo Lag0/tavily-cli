@@ -136,11 +136,15 @@ describe('CLI integration', () => {
   });
 
   it('rejects invalid numeric options before executing command', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { runCli } = await loadCli();
     await runCli(['node', 'tavily', 'search', 'hello', '--max-results', 'abc']);
 
     expect(handleSearchCommand).not.toHaveBeenCalled();
     expect(process.exitCode).toBe(1);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Error [INVALID_INPUT]:')
+    );
   });
 
   it('rejects legacy --status on non-status commands', async () => {
@@ -150,5 +154,26 @@ describe('CLI integration', () => {
     expect(handleStatusCommand).not.toHaveBeenCalled();
     expect(handleSearchCommand).not.toHaveBeenCalled();
     expect(process.exitCode).toBe(1);
+  });
+
+  it('renders a standardized runtime error shape for command failures', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { runCli } = await loadCli();
+    const { CommandRuntimeError } = await import(
+      '../../commands/runtime/command-error'
+    );
+    handleSearchCommand.mockRejectedValueOnce(
+      new CommandRuntimeError({
+        code: 'COMMAND_FAILED',
+        message: 'search failed',
+        suggestion: 'retry later',
+      })
+    );
+    await runCli(['node', 'tavily', 'search', 'hello']);
+
+    expect(process.exitCode).toBe(1);
+    expect(errorSpy).toHaveBeenCalledWith(
+      'Error [COMMAND_FAILED]: search failed\nRemediation: retry later'
+    );
   });
 });

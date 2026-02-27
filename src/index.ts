@@ -6,7 +6,9 @@ import { registerAllCommands } from './commands/registrars/register-all-commands
 import {
   CommandRuntimeError,
   isCommandRuntimeError,
+  toCommandRuntimeError,
 } from './commands/runtime/command-error';
+import { renderCliError } from './commands/runtime/render-cli-error';
 import { initializeConfig, updateConfig, validateConfig } from './utils/config';
 import { isUrl, normalizeUrl } from './utils/url';
 
@@ -96,10 +98,7 @@ export function createProgram(): Command {
 }
 
 function printCliError(error: CommandRuntimeError): void {
-  console.error(`Error: ${error.message}`);
-  if (error.suggestion) {
-    console.error(`Suggestion: ${error.suggestion}`);
-  }
+  console.error(renderCliError(error));
 }
 
 function isCommanderError(error: unknown): error is CommanderError {
@@ -114,20 +113,39 @@ export function handleCliError(error: unknown): void {
   }
 
   if (error instanceof InvalidArgumentError) {
-    console.error(`Error: ${error.message}`);
-    process.exitCode = 1;
+    const runtimeError = new CommandRuntimeError({
+      code: 'INVALID_INPUT',
+      message: error.message,
+      exitCode: 1,
+      suggestion: 'Run the command with --help to inspect valid options.',
+      cause: error,
+    });
+    printCliError(runtimeError);
+    process.exitCode = runtimeError.exitCode;
     return;
   }
 
   if (isCommanderError(error)) {
-    process.exitCode = error.exitCode || 1;
+    const runtimeError = new CommandRuntimeError({
+      code: 'INVALID_INPUT',
+      message: error.message,
+      exitCode: error.exitCode || 1,
+      suggestion: 'Run `tavily --help` for command usage.',
+      cause: error,
+    });
+    printCliError(runtimeError);
+    process.exitCode = runtimeError.exitCode;
     return;
   }
 
-  console.error(
-    `Fatal error: ${error instanceof Error ? error.message : String(error)}`
-  );
-  process.exitCode = 1;
+  const runtimeError = toCommandRuntimeError(error, {
+    code: 'COMMAND_EXECUTION_FAILED',
+    message: 'Unexpected command failure.',
+    exitCode: 1,
+    suggestion: 'Retry the command. If it persists, run `tavily doctor`.',
+  });
+  printCliError(runtimeError);
+  process.exitCode = runtimeError.exitCode;
 }
 
 export async function runCli(argv: string[] = process.argv): Promise<void> {
