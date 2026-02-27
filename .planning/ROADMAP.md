@@ -28,9 +28,9 @@ This roadmap upgrades the existing Tavily CLI from a functional command set into
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Extract and modularize command registrars by domain
-- [ ] 01-02: Introduce command runtime context and shared execution helpers
-- [ ] 01-03: Centralize error-to-exit translation at CLI boundary
+- [x] 01-01: Extract and modularize command registrars by domain
+- [x] 01-02: Introduce command runtime context and shared execution helpers
+- [x] 01-03: Centralize error-to-exit translation at CLI boundary
 
 ### Phase 2: Diagnostics Command Foundation
 **Goal**: Introduce `tavily doctor` as the primary diagnosis entrypoint for environment and integration health.
@@ -43,7 +43,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Implement doctor command scaffolding and check framework
+- [x] 02-01: Implement doctor command scaffolding and check framework
 - [ ] 02-02: Add environment/dependency/setup checks with actionable guidance
 - [ ] 02-03: Implement JSON reporting and deterministic exit code strategy
 
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Architecture Baseline Refactor | 3/3 | Complete    | 2026-02-27 |
-| 2. Diagnostics Command Foundation | 0/3 | Not started | - |
+| 2. Diagnostics Command Foundation | 1/3 | In Progress|  |
 | 3. Reliability and Type-Safe Contracts | 0/3 | Not started | - |
 | 4. Release Hardening and Auto-Remediation | 0/3 | Not started | - |
