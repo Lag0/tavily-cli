@@ -1,6 +1,7 @@
 import { saveCredentials } from '../utils/credentials';
 import { updateConfig } from '../utils/config';
 import { createInterface } from 'readline/promises';
+import { CommandRuntimeError } from './runtime/command-error';
 
 export interface LoginOptions {
   apiKey?: string;
@@ -40,10 +41,13 @@ export async function handleLoginCommand(options: LoginOptions): Promise<void> {
   }
 
   if (!resolvedApiKey) {
-    console.error(
-      'Error: API key is required. Set TAVILY_API_KEY and run "tavily login", or pass --api-key.'
-    );
-    process.exit(1);
+    throw new CommandRuntimeError({
+      code: 'AUTH_REQUIRED',
+      message:
+        'API key is required. Set TAVILY_API_KEY and run "tavily login", or pass --api-key.',
+      suggestion:
+        'Provide --api-key, set TAVILY_API_KEY, or run tavily login interactively.',
+    });
   }
 
   saveCredentials({ apiKey: resolvedApiKey, apiUrl });

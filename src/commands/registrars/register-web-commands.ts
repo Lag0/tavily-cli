@@ -7,6 +7,7 @@ import {
   handleResearchCommand,
   handleResearchStatusCommand,
 } from '../research';
+import { CommandRuntimeError } from '../runtime/command-error';
 import { parseJsonObject, parseList } from '../../utils/options';
 import { normalizeUrl } from '../../utils/url';
 
@@ -121,8 +122,11 @@ export function registerWebCommands(
       const normalizedUrls = [...new Set(urls.map(normalizeUrl))];
 
       if (normalizedUrls.length === 0) {
-        console.error('Error: at least one URL is required.');
-        process.exit(1);
+        throw new CommandRuntimeError({
+          code: 'INVALID_INPUT',
+          message: 'at least one URL is required.',
+          suggestion: 'Pass one URL argument or use --url <url>.',
+        });
       }
 
       await handleExtractCommand({

@@ -1,4 +1,5 @@
 import { runCommandOrExit } from '../utils/process';
+import { CommandRuntimeError } from './runtime/command-error';
 
 export type SetupSubcommand = 'skills' | 'mcp';
 
@@ -26,8 +27,11 @@ export async function handleSetupCommand(
     return;
   }
 
-  console.error(`Unknown setup subcommand: ${subcommand}`);
-  process.exit(1);
+  throw new CommandRuntimeError({
+    code: 'INVALID_INPUT',
+    message: `Unknown setup subcommand: ${subcommand}`,
+    suggestion: 'Use "skills" or "mcp".',
+  });
 }
 
 async function installSkills(options: SetupOptions): Promise<void> {

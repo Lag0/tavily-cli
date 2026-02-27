@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { getApiKey } from '../utils/config';
+import { CommandRuntimeError } from './runtime/command-error';
 
 export interface EnvPullOptions {
   file?: string;
@@ -14,8 +15,10 @@ export async function handleEnvPullCommand(
     const key = getApiKey();
 
     if (!key) {
-      console.error('No API key found. Run "tavily login" first.');
-      process.exit(1);
+      throw new CommandRuntimeError({
+        code: 'AUTH_REQUIRED',
+        message: 'No API key found. Run "tavily login" first.',
+      });
     }
 
     const line = `TAVILY_API_KEY=${key}`;
@@ -26,10 +29,10 @@ export async function handleEnvPullCommand(
 
       if (/^TAVILY_API_KEY=/m.test(content)) {
         if (!options.overwrite) {
-          console.error(
-            `TAVILY_API_KEY already exists in ${target}. Use --overwrite to replace it.`
-          );
-          process.exit(1);
+          throw new CommandRuntimeError({
+            code: 'INVALID_INPUT',
+            message: `TAVILY_API_KEY already exists in ${target}. Use --overwrite to replace it.`,
+          });
         }
 
         content = content.replace(/^TAVILY_API_KEY=.*$/m, line);
@@ -45,10 +48,17 @@ export async function handleEnvPullCommand(
       fs.chmodSync(target, 0o600);
     }
     console.log(`Updated ${target}`);
-  } catch (error) {
-    console.error(
-      `Failed to update env file: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
-    process.exit(1);
+  } catch (error: unknown) {
+    if (error instanceof CommandRuntimeError) {
+      throw error;
+    }
+
+    throw new CommandRuntimeError({
+      code: 'COMMAND_FAILED',
+      message: `Failed to update env file: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`,
+      cause: error,
+    });
   }
 }

@@ -1,6 +1,7 @@
 import { getApiKey, updateConfig } from '../utils/config';
 import { saveCredentials } from '../utils/credentials';
 import { runCommandOrExit } from '../utils/process';
+import { CommandRuntimeError } from './runtime/command-error';
 
 export interface InitOptions {
   global?: boolean;
@@ -46,10 +47,13 @@ export async function handleInitCommand(
 
     const apiKey = options.apiKey || getApiKey();
     if (!apiKey) {
-      console.error(
-        'No API key available. Set TAVILY_API_KEY, use --api-key in init, or run tavily login later.'
-      );
-      process.exit(1);
+      throw new CommandRuntimeError({
+        code: 'AUTH_REQUIRED',
+        message:
+          'No API key available. Set TAVILY_API_KEY, use --api-key in init, or run tavily login later.',
+        suggestion:
+          'Authenticate with tavily login first or pass --api-key to init.',
+      });
     }
 
     saveCredentials({ apiKey });

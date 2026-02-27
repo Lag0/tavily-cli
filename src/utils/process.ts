@@ -1,4 +1,5 @@
 import { spawnSync } from 'child_process';
+import { CommandRuntimeError } from '../commands/runtime/command-error';
 
 interface RunCommandOptions {
   command: string;
@@ -30,13 +31,19 @@ export function runCommandOrExit(options: RunCommandOptions): void {
   });
 
   if (result.error) {
-    console.error(`${failureMessage} (${result.error.message})`);
-    process.exit(1);
+    throw new CommandRuntimeError({
+      code: 'COMMAND_FAILED',
+      message: `${failureMessage} (${result.error.message})`,
+      cause: result.error,
+    });
   }
 
   if (result.status !== 0) {
     const status = result.status ?? 1;
-    console.error(`${failureMessage} (exit code ${status}).`);
-    process.exit(status);
+    throw new CommandRuntimeError({
+      code: 'COMMAND_FAILED',
+      message: `${failureMessage} (exit code ${status}).`,
+      exitCode: status,
+    });
   }
 }
