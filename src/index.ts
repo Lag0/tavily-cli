@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-import { Command, InvalidArgumentError } from 'commander';
+import { Command, CommanderError, InvalidArgumentError } from 'commander';
 import packageJson from '../package.json';
 import { registerAllCommands } from './commands/registrars/register-all-commands';
+import {
+  CommandRuntimeError,
+  isCommandRuntimeError,
+} from './commands/runtime/command-error';
 import { initializeConfig, updateConfig, validateConfig } from './utils/config';
 import { isUrl, normalizeUrl } from './utils/url';
 
@@ -45,6 +49,7 @@ function parsePositiveNumberOption(optionName: string) {
 
 export function createProgram(): Command {
   const program = new Command();
+  program.exitOverride();
 
   program
     .name('tavily')
@@ -90,6 +95,41 @@ export function createProgram(): Command {
   return program;
 }
 
+function printCliError(error: CommandRuntimeError): void {
+  console.error(`Error: ${error.message}`);
+  if (error.suggestion) {
+    console.error(`Suggestion: ${error.suggestion}`);
+  }
+}
+
+function isCommanderError(error: unknown): error is CommanderError {
+  return error instanceof CommanderError;
+}
+
+export function handleCliError(error: unknown): void {
+  if (isCommandRuntimeError(error)) {
+    printCliError(error);
+    process.exitCode = error.exitCode;
+    return;
+  }
+
+  if (error instanceof InvalidArgumentError) {
+    console.error(`Error: ${error.message}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  if (isCommanderError(error)) {
+    process.exitCode = error.exitCode || 1;
+    return;
+  }
+
+  console.error(
+    `Fatal error: ${error instanceof Error ? error.message : String(error)}`
+  );
+  process.exitCode = 1;
+}
+
 export async function runCli(argv: string[] = process.argv): Promise<void> {
   initializeConfig();
 
@@ -102,14 +142,22 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
   }
 
   if (!args[0].startsWith('-') && isUrl(args[0])) {
-    const url = normalizeUrl(args[0]);
-    const remaining = args.slice(1);
-    const next = ['extract', url, ...remaining];
-    await program.parseAsync(['node', 'tavily', ...next]);
+    try {
+      const url = normalizeUrl(args[0]);
+      const remaining = args.slice(1);
+      const next = ['extract', url, ...remaining];
+      await program.parseAsync(['node', 'tavily', ...next]);
+    } catch (error) {
+      handleCliError(error);
+    }
     return;
   }
 
-  await program.parseAsync(argv);
+  try {
+    await program.parseAsync(argv);
+  } catch (error) {
+    handleCliError(error);
+  }
 }
 
 if (
@@ -117,10 +165,5 @@ if (
   typeof module !== 'undefined' &&
   require.main === module
 ) {
-  runCli(process.argv).catch((error) => {
-    console.error(
-      `Fatal error: ${error instanceof Error ? error.message : String(error)}`
-    );
-    process.exit(1);
-  });
+  runCli(process.argv);
 }

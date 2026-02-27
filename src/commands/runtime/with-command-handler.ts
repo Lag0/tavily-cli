@@ -3,27 +3,17 @@ import {
   type CommandContext,
   type CommandRuntimeOptions,
 } from './command-context';
+import {
+  CommandRuntimeError,
+  toCommandRuntimeError,
+} from './command-error';
 
-export class CommandExecutionError extends Error {
-  readonly cause?: unknown;
-
-  constructor(message: string, cause?: unknown) {
-    super(message);
-    this.name = 'CommandExecutionError';
-    this.cause = cause;
-  }
-}
-
-function normalizeError(error: unknown): CommandExecutionError {
-  if (error instanceof CommandExecutionError) {
-    return error;
-  }
-
-  if (error instanceof Error) {
-    return new CommandExecutionError(error.message, error);
-  }
-
-  return new CommandExecutionError('Unknown error', error);
+function normalizeError(error: unknown): CommandRuntimeError {
+  return toCommandRuntimeError(error, {
+    code: 'COMMAND_EXECUTION_FAILED',
+    message: 'Unknown error',
+    exitCode: 1,
+  });
 }
 
 export async function withCommandHandler<TOptions extends CommandRuntimeOptions>(
