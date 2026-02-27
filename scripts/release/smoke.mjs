@@ -48,6 +48,23 @@ function runDoctorSmoke(distEntryPath) {
   }
 }
 
+function runUnknownCommandSmoke(distEntryPath) {
+  const result = spawnSync(process.execPath, [distEntryPath, 'unknown-command'], {
+    encoding: 'utf-8',
+    env: process.env,
+  });
+
+  const status = result.status ?? 1;
+  if (status !== 1) {
+    fail(`unknown command smoke should exit with 1, got ${status}.`);
+  }
+
+  const errorOutput = `${result.stderr ?? ''}${result.stdout ?? ''}`;
+  if (!errorOutput.includes('Error [INVALID_INPUT]:')) {
+    fail('unknown command smoke output is missing deterministic runtime error prefix.');
+  }
+}
+
 const distEntryPath = path.join(process.cwd(), 'dist', 'index.js');
 if (!existsSync(distEntryPath)) {
   fail('Missing dist/index.js. Run `pnpm run build` before smoke.');
@@ -64,5 +81,6 @@ run(
   'integration routing smoke tests'
 );
 runDoctorSmoke(distEntryPath);
+runUnknownCommandSmoke(distEntryPath);
 
 console.log('[smoke] Release smoke checks passed.');

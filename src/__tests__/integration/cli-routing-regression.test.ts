@@ -96,6 +96,37 @@ describe('CLI routing regression', () => {
     expect(handleResearchStatusCommand).not.toHaveBeenCalled();
   });
 
+  it('routes doctor fix dry-run checks without dispatching web handlers', async () => {
+    const { runCli } = await loadCli();
+
+    await runCli([
+      'node',
+      'tavily',
+      'doctor',
+      '--fix',
+      '--fix-dry-run',
+      '--fix-check',
+      'auth.credentials_file',
+    ]);
+
+    expect(handleDoctorCommand).toHaveBeenCalledTimes(1);
+    expect(handleDoctorCommand).toHaveBeenCalledWith({
+      output: undefined,
+      json: false,
+      pretty: false,
+      fix: true,
+      fixDryRun: true,
+      fixCheck: ['auth.credentials_file'],
+    });
+
+    expect(handleSearchCommand).not.toHaveBeenCalled();
+    expect(handleExtractCommand).not.toHaveBeenCalled();
+    expect(handleCrawlCommand).not.toHaveBeenCalled();
+    expect(handleMapCommand).not.toHaveBeenCalled();
+    expect(handleResearchCommand).not.toHaveBeenCalled();
+    expect(handleResearchStatusCommand).not.toHaveBeenCalled();
+  });
+
   it('keeps bare URL shortcut pinned to extract routing', async () => {
     const { runCli } = await loadCli();
 
@@ -111,11 +142,15 @@ describe('CLI routing regression', () => {
   });
 
   it('rejects unknown commands without calling handlers', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { runCli } = await loadCli();
 
     await runCli(['node', 'tavily', 'unknown-command']);
 
     expect(process.exitCode).toBe(1);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Error [INVALID_INPUT]:')
+    );
     expect(handleSearchCommand).not.toHaveBeenCalled();
     expect(handleExtractCommand).not.toHaveBeenCalled();
     expect(handleCrawlCommand).not.toHaveBeenCalled();
