@@ -9,9 +9,9 @@ Requirements for the 1-week reliability/refactor milestone.
 
 ### Diagnostics
 
-- [ ] **DIAG-01**: User can run `tavily doctor` to validate API key, API URL trust status, and local credential state.
-- [ ] **DIAG-02**: User can run `tavily doctor` to validate setup dependencies (`node`, `npm`, `npx`) and skill/MCP install readiness.
-- [ ] **DIAG-03**: User can run `tavily doctor --json` and receive a machine-readable report with check statuses.
+- [x] **DIAG-01**: User can run `tavily doctor` to validate API key, API URL trust status, and local credential state.
+- [x] **DIAG-02**: User can run `tavily doctor` to validate setup dependencies (`node`, `npm`, `npx`) and skill/MCP install readiness.
+- [x] **DIAG-03**: User can run `tavily doctor --json` and receive a machine-readable report with check statuses.
 - [ ] **DIAG-04**: User can run `tavily doctor --fix` to apply safe automated remediations for common local setup issues.
 
 ### Reliability
@@ -60,9 +60,9 @@ Explicitly excluded from v1.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DIAG-01 | Phase 2 | Pending |
-| DIAG-02 | Phase 2 | Pending |
-| DIAG-03 | Phase 2 | Pending |
+| DIAG-01 | Phase 2 | Complete |
+| DIAG-02 | Phase 2 | Complete |
+| DIAG-03 | Phase 2 | Complete |
 | DIAG-04 | Phase 4 | Pending |
 | RELI-01 | Phase 3 | Pending |
 | RELI-02 | Phase 3 | Pending |
@@ -83,4 +83,4 @@ Explicitly excluded from v1.
 
 ---
 *Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after initial definition*
+*Last updated: 2026-02-27 after phase 2 completion*

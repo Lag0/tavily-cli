@@ -11,7 +11,7 @@ This roadmap upgrades the existing Tavily CLI from a functional command set into
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Architecture Baseline Refactor** - Reduce fragility in command composition and error boundaries. (completed 2026-02-27)
-- [ ] **Phase 2: Diagnostics Command Foundation** - Deliver `tavily doctor` core checks and JSON diagnostics.
+- [x] **Phase 2: Diagnostics Command Foundation** - Deliver `tavily doctor` core checks and JSON diagnostics. (completed 2026-02-27)
 - [ ] **Phase 3: Reliability and Type-Safe Contracts** - Standardize failures and remove unsafe command payload typing.
 - [ ] **Phase 4: Release Hardening and Auto-Remediation** - Add smoke gates, migration docs, and `doctor --fix`.
 
@@ -45,7 +45,7 @@ Plans:
 Plans:
 - [x] 02-01: Implement doctor command scaffolding and check framework
 - [x] 02-02: Add environment/dependency/setup checks with actionable guidance
-- [ ] 02-03: Implement JSON reporting and deterministic exit code strategy
+- [x] 02-03: Implement JSON reporting and deterministic exit code strategy
 
 ### Phase 3: Reliability and Type-Safe Contracts
 **Goal**: Make runtime behavior robust and typed by eliminating unsafe command payload adaptation and normalizing failures.
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Architecture Baseline Refactor | 3/3 | Complete    | 2026-02-27 |
-| 2. Diagnostics Command Foundation | 2/3 | In Progress|  |
+| 2. Diagnostics Command Foundation | 3/3 | Complete    | 2026-02-27 |
 | 3. Reliability and Type-Safe Contracts | 0/3 | Not started | - |
 | 4. Release Hardening and Auto-Remediation | 0/3 | Not started | - |
