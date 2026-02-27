@@ -83,6 +83,17 @@ describe('CLI integration', () => {
     );
   });
 
+  it('routes env command through tooling registrar', async () => {
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'env', '--file', '.env.local', '--overwrite']);
+
+    expect(handleEnvPullCommand).toHaveBeenCalledTimes(1);
+    expect(handleEnvPullCommand).toHaveBeenCalledWith({
+      file: '.env.local',
+      overwrite: true,
+    });
+  });
+
   it('rejects invalid numeric options before executing command', async () => {
     const { runCli } = await loadCli();
     const exitSpy = mockProcessExit();
