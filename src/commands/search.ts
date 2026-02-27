@@ -1,4 +1,5 @@
 import type { SearchOptions } from '../types/search';
+import { buildSearchRequest } from '../types/tavily-request-adapters';
 import { getClient } from '../utils/client';
 import { writeCommandOutput } from './runtime/command-context';
 import { withCommandHandler } from './runtime/with-command-handler';
@@ -39,47 +40,17 @@ function formatSearchReadable(result: any): string {
 
 export async function executeSearch(options: SearchOptions): Promise<any> {
   const client = getClient({ apiKey: options.apiKey, apiUrl: options.apiUrl });
+  const request = buildSearchRequest(options);
 
-  return client.search(options.query, {
-    maxResults: options.maxResults,
-    searchDepth: options.searchDepth,
-    topic: options.topic,
-    timeRange: options.timeRange,
-    startDate: options.startDate,
-    endDate: options.endDate,
-    includeDomains: options.includeDomains,
-    excludeDomains: options.excludeDomains,
-    country: options.country,
-    includeRawContent: options.includeRawContent,
-    includeImages: options.includeImages,
-    includeImageDescriptions: options.includeImageDescriptions,
-    includeAnswer: options.includeAnswer,
-    includeFavicon: options.includeFavicon,
-    includeUsage: options.includeUsage,
-  } as any);
+  return client.search(request.query, request.request);
 }
 
 export async function handleSearchCommand(
   options: SearchOptions
 ): Promise<void> {
   await withCommandHandler(options, async (context) => {
-    const result = await context.client.search(options.query, {
-      maxResults: options.maxResults,
-      searchDepth: options.searchDepth,
-      topic: options.topic,
-      timeRange: options.timeRange,
-      startDate: options.startDate,
-      endDate: options.endDate,
-      includeDomains: options.includeDomains,
-      excludeDomains: options.excludeDomains,
-      country: options.country,
-      includeRawContent: options.includeRawContent,
-      includeImages: options.includeImages,
-      includeImageDescriptions: options.includeImageDescriptions,
-      includeAnswer: options.includeAnswer,
-      includeFavicon: options.includeFavicon,
-      includeUsage: options.includeUsage,
-    } as any);
+    const request = buildSearchRequest(options);
+    const result = await context.client.search(request.query, request.request);
 
     writeCommandOutput(context, result, formatSearchReadable);
   });

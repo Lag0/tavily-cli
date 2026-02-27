@@ -1,4 +1,5 @@
 import type { ExtractOptions } from '../types/extract';
+import { buildExtractRequest } from '../types/tavily-request-adapters';
 import { getClient } from '../utils/client';
 import { writeCommandOutput } from './runtime/command-context';
 import { withCommandHandler } from './runtime/with-command-handler';
@@ -28,33 +29,17 @@ function formatExtractReadable(result: any): string {
 
 export async function executeExtract(options: ExtractOptions): Promise<any> {
   const client = getClient({ apiKey: options.apiKey, apiUrl: options.apiUrl });
+  const request = buildExtractRequest(options);
 
-  return client.extract(options.urls, {
-    extractDepth: options.extractDepth,
-    format: options.format,
-    includeImages: options.includeImages,
-    includeFavicon: options.includeFavicon,
-    includeUsage: options.includeUsage,
-    timeout: options.timeout,
-    query: options.query,
-    chunksPerSource: options.chunksPerSource,
-  } as any);
+  return client.extract(request.urls, request.request);
 }
 
 export async function handleExtractCommand(
   options: ExtractOptions
 ): Promise<void> {
   await withCommandHandler(options, async (context) => {
-    const result = await context.client.extract(options.urls, {
-      extractDepth: options.extractDepth,
-      format: options.format,
-      includeImages: options.includeImages,
-      includeFavicon: options.includeFavicon,
-      includeUsage: options.includeUsage,
-      timeout: options.timeout,
-      query: options.query,
-      chunksPerSource: options.chunksPerSource,
-    } as any);
+    const request = buildExtractRequest(options);
+    const result = await context.client.extract(request.urls, request.request);
 
     writeCommandOutput(context, result, formatExtractReadable);
   });
