@@ -80,7 +80,14 @@ describe('CLI integration', () => {
 
   it('routes env command through tooling registrar', async () => {
     const { runCli } = await loadCli();
-    await runCli(['node', 'tavily', 'env', '--file', '.env.local', '--overwrite']);
+    await runCli([
+      'node',
+      'tavily',
+      'env',
+      '--file',
+      '.env.local',
+      '--overwrite',
+    ]);
 
     expect(handleEnvPullCommand).toHaveBeenCalledTimes(1);
     expect(handleEnvPullCommand).toHaveBeenCalledWith({
@@ -103,7 +110,13 @@ describe('CLI integration', () => {
 
   it('passes doctor output path options through tooling registrar', async () => {
     const { runCli } = await loadCli();
-    await runCli(['node', 'tavily', 'doctor', '--output', '.tavily/doctor.json']);
+    await runCli([
+      'node',
+      'tavily',
+      'doctor',
+      '--output',
+      '.tavily/doctor.json',
+    ]);
 
     expect(handleDoctorCommand).toHaveBeenCalledTimes(1);
     expect(handleDoctorCommand).toHaveBeenCalledWith({
@@ -134,11 +147,7 @@ describe('CLI integration', () => {
       pretty: false,
       fix: true,
       fixDryRun: true,
-      fixCheck: [
-        'auth.credentials_file',
-        'api_url.trust_posture',
-        'deps.node',
-      ],
+      fixCheck: ['auth.credentials_file', 'api_url.trust_posture', 'deps.node'],
     });
   });
 
@@ -178,7 +187,15 @@ describe('CLI integration', () => {
 
   it('rejects invalid positive-number parser options before executing command', async () => {
     const { runCli } = await loadCli();
-    await runCli(['node', 'tavily', 'extract', '--url', 'https://example.com', '--timeout', '0']);
+    await runCli([
+      'node',
+      'tavily',
+      'extract',
+      '--url',
+      'https://example.com',
+      '--timeout',
+      '0',
+    ]);
 
     expect(handleExtractCommand).not.toHaveBeenCalled();
     expect(process.exitCode).toBe(1);
@@ -211,9 +228,8 @@ describe('CLI integration', () => {
   it('renders a standardized runtime error shape for command failures', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { runCli } = await loadCli();
-    const { CommandRuntimeError } = await import(
-      '../../commands/runtime/command-error'
-    );
+    const { CommandRuntimeError } =
+      await import('../../commands/runtime/command-error');
     handleSearchCommand.mockRejectedValueOnce(
       new CommandRuntimeError({
         code: 'COMMAND_FAILED',

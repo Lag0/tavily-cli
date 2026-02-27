@@ -111,9 +111,7 @@ export function classifyCommandError(error: unknown): CommandRuntimeError {
     });
   }
 
-  if (
-    /too many requests|rate limit/i.test(message)
-  ) {
+  if (/too many requests|rate limit/i.test(message)) {
     return new CommandRuntimeError({
       code: 'RATE_LIMITED',
       message: 'Tavily API rate limit reached.',

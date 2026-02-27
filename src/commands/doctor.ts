@@ -8,7 +8,11 @@ import {
   type DoctorCheckId,
 } from './doctor/checks';
 import { runDoctorFixes, type DoctorFixReport } from './doctor/fixes';
-import { buildDoctorReport, renderDoctorTextReport, type DoctorReport } from './doctor/report';
+import {
+  buildDoctorReport,
+  renderDoctorTextReport,
+  type DoctorReport,
+} from './doctor/report';
 
 export interface DoctorCommandOptions extends DoctorCheckContext {
   output?: string;
@@ -28,12 +32,14 @@ function shouldRunFixes(options: DoctorCommandOptions): boolean {
   return Boolean(options.fix || options.fixDryRun || options.fixCheck?.length);
 }
 
-function resolveFixCheckSelection(options: DoctorCommandOptions): DoctorCheckId[] | undefined {
+function resolveFixCheckSelection(
+  options: DoctorCommandOptions
+): DoctorCheckId[] | undefined {
   if (!options.fixCheck || options.fixCheck.length === 0) return undefined;
 
-  const deduped = [...new Set(options.fixCheck.map((checkId) => checkId.trim()))].filter(
-    Boolean
-  );
+  const deduped = [
+    ...new Set(options.fixCheck.map((checkId) => checkId.trim())),
+  ].filter(Boolean);
   const invalid = deduped.filter((checkId) => !isDoctorCheckId(checkId));
 
   if (invalid.length > 0) {

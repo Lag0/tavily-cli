@@ -2,7 +2,10 @@ import { constants as fsConstants, existsSync, readFileSync } from 'fs';
 import { accessSync } from 'fs';
 import { spawnSync } from 'child_process';
 import * as path from 'path';
-import { getConfigDirectoryPath, loadCredentials } from '../../utils/credentials';
+import {
+  getConfigDirectoryPath,
+  loadCredentials,
+} from '../../utils/credentials';
 
 const DEFAULT_API_URL = 'https://api.tavily.com';
 const ALLOW_UNTRUSTED_API_URL_ENV = 'TAVILY_ALLOW_UNTRUSTED_API_URL';
@@ -172,7 +175,8 @@ function buildApiKeyCheck(context: DoctorCheckContext): DoctorCheckResult {
     category: 'auth',
     required: true,
     status: 'fail',
-    message: 'No Tavily API key was found in flags, environment, or stored credentials.',
+    message:
+      'No Tavily API key was found in flags, environment, or stored credentials.',
     remediation:
       'Run "tavily login", set TAVILY_API_KEY, or pass --api-key for the current invocation.',
     details: {
@@ -219,9 +223,10 @@ function buildCredentialsCheck(): DoctorCheckResult {
   }
 
   try {
-    const parsed = JSON.parse(
-      readFileSync(credentialsPath, 'utf-8')
-    ) as Record<string, unknown>;
+    const parsed = JSON.parse(readFileSync(credentialsPath, 'utf-8')) as Record<
+      string,
+      unknown
+    >;
 
     return {
       id: 'auth.credentials_file',
@@ -233,8 +238,10 @@ function buildCredentialsCheck(): DoctorCheckResult {
         path: credentialsPath,
         exists: true,
         readable: true,
-        hasApiKey: typeof parsed.apiKey === 'string' && parsed.apiKey.length > 0,
-        hasApiUrl: typeof parsed.apiUrl === 'string' && parsed.apiUrl.length > 0,
+        hasApiKey:
+          typeof parsed.apiKey === 'string' && parsed.apiKey.length > 0,
+        hasApiUrl:
+          typeof parsed.apiUrl === 'string' && parsed.apiUrl.length > 0,
       },
     };
   } catch {
@@ -360,7 +367,9 @@ function probeExecutable(command: string): ExecutableProbe {
   };
 }
 
-function buildDependencyCheck(command: 'node' | 'npm' | 'npx'): DoctorCheckResult {
+function buildDependencyCheck(
+  command: 'node' | 'npm' | 'npx'
+): DoctorCheckResult {
   const probe = probeExecutable(command);
 
   if (!probe.available) {

@@ -6,8 +6,7 @@ import {
 import { registerAuthCommands } from './register-auth-commands';
 import { registerToolingCommands } from './register-tooling-commands';
 
-export interface RegisterAllCommandsOptions
-  extends WebCommandRegistrationOptions {}
+export interface RegisterAllCommandsOptions extends WebCommandRegistrationOptions {}
 
 export function registerAllCommands(
   program: Command,

@@ -11,7 +11,9 @@ import type { MapOptions } from './map';
 import type { ResearchOptions } from './research';
 import type { SearchOptions } from './search';
 
-type SearchRawContentMode = NonNullable<TavilySearchOptions['includeRawContent']>;
+type SearchRawContentMode = NonNullable<
+  TavilySearchOptions['includeRawContent']
+>;
 type CitationFormat = NonNullable<TavilyResearchOptions['citationFormat']>;
 
 const CITATION_FORMATS: readonly CitationFormat[] = [

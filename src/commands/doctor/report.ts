@@ -31,7 +31,10 @@ function getOverallStatus(summary: DoctorSummary): DoctorOverallStatus {
   return 'pass';
 }
 
-function countStatuses(checks: DoctorCheckResult[], status: DoctorCheckStatus): number {
+function countStatuses(
+  checks: DoctorCheckResult[],
+  status: DoctorCheckStatus
+): number {
   return checks.filter((check) => check.status === status).length;
 }
 
@@ -45,7 +48,9 @@ export function buildDoctorReport(
     passed: countStatuses(checks, 'pass'),
     warned: countStatuses(checks, 'warn'),
     failed: countStatuses(checks, 'fail'),
-    requiredFailures: checks.filter((check) => check.required && check.status === 'fail').length,
+    requiredFailures: checks.filter(
+      (check) => check.required && check.status === 'fail'
+    ).length,
   };
 
   return {

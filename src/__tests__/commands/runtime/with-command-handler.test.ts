@@ -47,7 +47,8 @@ describe('withCommandHandler', () => {
     ).rejects.toMatchObject({
       code: 'API_TIMEOUT',
       message: 'Tavily request timed out.',
-      suggestion: 'Retry the command or increase timeout flags for the request.',
+      suggestion:
+        'Retry the command or increase timeout flags for the request.',
       details: 'Request timed out after 60 seconds.',
       exitCode: 1,
     });

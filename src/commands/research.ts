@@ -44,7 +44,10 @@ export async function handleResearchCommand(
 ): Promise<void> {
   await withCommandHandler(options, async (context) => {
     const request = buildResearchRequest(options);
-    const result = await context.client.research(request.input, request.request);
+    const result = await context.client.research(
+      request.input,
+      request.request
+    );
 
     if (options.stream) {
       const chunks: string[] = [];

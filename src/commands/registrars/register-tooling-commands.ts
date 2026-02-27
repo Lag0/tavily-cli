@@ -5,7 +5,10 @@ import { handleEnvPullCommand } from '../env';
 import { handleDoctorCommand } from '../doctor';
 import { parseList } from '../../utils/options';
 
-function collectDoctorFixChecks(value: string, previous: string[] = []): string[] {
+function collectDoctorFixChecks(
+  value: string,
+  previous: string[] = []
+): string[] {
   const parsed = parseList(value);
   if (!parsed) return previous;
   return [...previous, ...parsed];
@@ -73,7 +76,11 @@ export function registerToolingCommands(program: Command): void {
       collectDoctorFixChecks,
       []
     )
-    .option('--fix-dry-run', 'Preview safe remediations without mutating files', false)
+    .option(
+      '--fix-dry-run',
+      'Preview safe remediations without mutating files',
+      false
+    )
     .action(async (options) => {
       const doctorOptions: Parameters<typeof handleDoctorCommand>[0] = {
         output: options.output,

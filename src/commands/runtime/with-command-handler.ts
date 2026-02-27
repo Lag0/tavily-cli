@@ -5,7 +5,9 @@ import {
 } from './command-context';
 import { classifyCommandError } from './classify-command-error';
 
-export async function withCommandHandler<TOptions extends CommandRuntimeOptions>(
+export async function withCommandHandler<
+  TOptions extends CommandRuntimeOptions,
+>(
   options: TOptions,
   run: (context: CommandContext<TOptions>) => Promise<void>
 ): Promise<void> {

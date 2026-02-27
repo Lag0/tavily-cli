@@ -27,7 +27,10 @@ export function createCommandContext<TOptions extends CommandRuntimeOptions>(
   };
 }
 
-export function writeCommandOutput<TOptions extends CommandRuntimeOptions, TResult>(
+export function writeCommandOutput<
+  TOptions extends CommandRuntimeOptions,
+  TResult,
+>(
   context: CommandContext<TOptions>,
   result: TResult,
   formatReadable: (result: TResult) => string

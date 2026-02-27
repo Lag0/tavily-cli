@@ -11,9 +11,15 @@ import * as path from 'path';
 import { spawnSync } from 'child_process';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runDoctorChecks } from '../../commands/doctor/checks';
-import { buildDoctorCommandReport, handleDoctorCommand } from '../../commands/doctor';
+import {
+  buildDoctorCommandReport,
+  handleDoctorCommand,
+} from '../../commands/doctor';
 import { renderDoctorTextReport } from '../../commands/doctor/report';
-import { getConfigDirectoryPath, loadCredentials } from '../../utils/credentials';
+import {
+  getConfigDirectoryPath,
+  loadCredentials,
+} from '../../utils/credentials';
 import * as outputUtils from '../../utils/output';
 
 vi.mock('child_process', () => ({

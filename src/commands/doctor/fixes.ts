@@ -1,7 +1,17 @@
-import { chmodSync, copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import {
+  chmodSync,
+  copyFileSync,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from 'fs';
 import * as path from 'path';
 import { getConfigDirectoryPath } from '../../utils/credentials';
-import type { DoctorCheckContext, DoctorCheckId, DoctorCheckResult } from './checks';
+import type {
+  DoctorCheckContext,
+  DoctorCheckId,
+  DoctorCheckResult,
+} from './checks';
 
 export type DoctorFixStatus = 'applied' | 'skipped' | 'failed';
 
@@ -44,7 +54,9 @@ export interface DoctorFixHandlerContext {
 
 export type DoctorFixHandler = (
   context: DoctorFixHandlerContext
-) => Promise<Omit<DoctorFixResult, 'checkId'>> | Omit<DoctorFixResult, 'checkId'>;
+) =>
+  | Promise<Omit<DoctorFixResult, 'checkId'>>
+  | Omit<DoctorFixResult, 'checkId'>;
 
 type DoctorFixHandlers = Partial<Record<DoctorCheckId, DoctorFixHandler>>;
 
@@ -86,8 +98,10 @@ function asCredentialsCheckDetails(details: unknown): CredentialsCheckDetails {
   return {
     path: typeof record.path === 'string' ? record.path : undefined,
     exists: typeof record.exists === 'boolean' ? record.exists : undefined,
-    readable: typeof record.readable === 'boolean' ? record.readable : undefined,
-    parseable: typeof record.parseable === 'boolean' ? record.parseable : undefined,
+    readable:
+      typeof record.readable === 'boolean' ? record.readable : undefined,
+    parseable:
+      typeof record.parseable === 'boolean' ? record.parseable : undefined,
   };
 }
 
@@ -104,13 +118,16 @@ function asApiUrlTrustDetails(details: unknown): ApiUrlTrustDetails {
         ? record.source
         : undefined,
     value: typeof record.value === 'string' ? record.value : undefined,
-    parseError: typeof record.parseError === 'string' ? record.parseError : undefined,
+    parseError:
+      typeof record.parseError === 'string' ? record.parseError : undefined,
     protocol: typeof record.protocol === 'string' ? record.protocol : undefined,
     hostname: typeof record.hostname === 'string' ? record.hostname : undefined,
     trustedHost:
       typeof record.trustedHost === 'boolean' ? record.trustedHost : undefined,
     secureProtocol:
-      typeof record.secureProtocol === 'boolean' ? record.secureProtocol : undefined,
+      typeof record.secureProtocol === 'boolean'
+        ? record.secureProtocol
+        : undefined,
   };
 }
 
@@ -269,7 +286,11 @@ function resetStoredApiUrlFix(
   const previousApiUrl =
     typeof parsed.apiUrl === 'string' ? parsed.apiUrl : undefined;
   parsed.apiUrl = DEFAULT_TRUSTED_API_URL;
-  writeFileSync(credentialsPath, JSON.stringify(parsed, null, 2) + '\n', 'utf-8');
+  writeFileSync(
+    credentialsPath,
+    JSON.stringify(parsed, null, 2) + '\n',
+    'utf-8'
+  );
   ensureSecurePermissions(credentialsPath);
 
   return {
@@ -336,7 +357,8 @@ async function executeFixForCheck(
       dryRun,
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unexpected fix error.';
+    const message =
+      error instanceof Error ? error.message : 'Unexpected fix error.';
     return {
       checkId: check.id,
       status: 'failed',
@@ -363,7 +385,9 @@ export async function runDoctorFixes(
       : options.checks.filter((check) => check.status === 'fail');
 
   const results = await Promise.all(
-    checksToAttempt.map((check) => executeFixForCheck(check, context, dryRun, handlers))
+    checksToAttempt.map((check) =>
+      executeFixForCheck(check, context, dryRun, handlers)
+    )
   );
 
   results.sort((left, right) => left.checkId.localeCompare(right.checkId));
