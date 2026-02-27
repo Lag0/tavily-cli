@@ -10,7 +10,7 @@ This roadmap upgrades the existing Tavily CLI from a functional command set into
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Architecture Baseline Refactor** - Reduce fragility in command composition and error boundaries.
+- [x] **Phase 1: Architecture Baseline Refactor** - Reduce fragility in command composition and error boundaries. (completed 2026-02-27)
 - [ ] **Phase 2: Diagnostics Command Foundation** - Deliver `tavily doctor` core checks and JSON diagnostics.
 - [ ] **Phase 3: Reliability and Type-Safe Contracts** - Standardize failures and remove unsafe command payload typing.
 - [ ] **Phase 4: Release Hardening and Auto-Remediation** - Add smoke gates, migration docs, and `doctor --fix`.
@@ -86,7 +86,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Architecture Baseline Refactor | 2/3 | In Progress|  |
+| 1. Architecture Baseline Refactor | 3/3 | Complete   | 2026-02-27 |
 | 2. Diagnostics Command Foundation | 0/3 | Not started | - |
 | 3. Reliability and Type-Safe Contracts | 0/3 | Not started | - |
 | 4. Release Hardening and Auto-Remediation | 0/3 | Not started | - |

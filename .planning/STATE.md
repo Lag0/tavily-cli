@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T08:19:22.284Z"
+last_updated: "2026-02-27T18:18:52.261Z"
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -57,6 +57,7 @@ Recent decisions affecting current work:
 - [Init]: Defer automation workflow features to v1.1.
 - [Phase 01]: Modularized CLI registration by domain registrars and aggregator
 - [Phase 01]: Adopted shared command runtime context + withCommandHandler for web commands
+- [Phase 01]: Centralized CLI error-to-exit mapping with CommandRuntimeError contract
 
 ### Pending Todos
 
