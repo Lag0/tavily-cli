@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { handleLoginCommand } from '../../commands/login';
+import { CommandRuntimeError } from '../../commands/runtime/command-error';
 import { saveCredentials } from '../../utils/credentials';
 import { updateConfig } from '../../utils/config';
 
@@ -51,21 +52,12 @@ describe('handleLoginCommand', () => {
   });
 
   it('fails when api key is missing and no env var is set', async () => {
-    const errorSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(((
-      code?: string | number | null | undefined
-    ) => {
-      throw new Error(`process.exit:${code}`);
-    }) as never);
-
-    await expect(handleLoginCommand({})).rejects.toThrow('process.exit:1');
-    expect(errorSpy).toHaveBeenCalledWith(
-      'Error: API key is required. Set TAVILY_API_KEY and run "tavily login", or pass --api-key.'
-    );
-
-    exitSpy.mockRestore();
-    errorSpy.mockRestore();
+    await expect(handleLoginCommand({})).rejects.toMatchObject({
+      name: CommandRuntimeError.name,
+      message:
+        'API key is required. Set TAVILY_API_KEY and run "tavily login", or pass --api-key.',
+      code: 'AUTH_REQUIRED',
+      exitCode: 1,
+    });
   });
 });

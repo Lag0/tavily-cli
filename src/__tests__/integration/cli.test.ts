@@ -42,18 +42,11 @@ async function loadCli() {
   return import('../../index');
 }
 
-function mockProcessExit() {
-  return vi.spyOn(process, 'exit').mockImplementation(((
-    code?: string | number | null | undefined
-  ) => {
-    throw new Error(`process.exit:${code ?? 0}`);
-  }) as never);
-}
-
 describe('CLI integration', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.clearAllMocks();
+    process.exitCode = 0;
   });
 
   it('runs status only through the explicit status command', async () => {
@@ -96,26 +89,18 @@ describe('CLI integration', () => {
 
   it('rejects invalid numeric options before executing command', async () => {
     const { runCli } = await loadCli();
-    const exitSpy = mockProcessExit();
-
-    await expect(
-      runCli(['node', 'tavily', 'search', 'hello', '--max-results', 'abc'])
-    ).rejects.toThrow();
+    await runCli(['node', 'tavily', 'search', 'hello', '--max-results', 'abc']);
 
     expect(handleSearchCommand).not.toHaveBeenCalled();
-    exitSpy.mockRestore();
+    expect(process.exitCode).toBe(1);
   });
 
   it('rejects legacy --status on non-status commands', async () => {
     const { runCli } = await loadCli();
-    const exitSpy = mockProcessExit();
-
-    await expect(
-      runCli(['node', 'tavily', 'search', 'hello', '--status'])
-    ).rejects.toThrow();
+    await runCli(['node', 'tavily', 'search', 'hello', '--status']);
 
     expect(handleStatusCommand).not.toHaveBeenCalled();
     expect(handleSearchCommand).not.toHaveBeenCalled();
-    exitSpy.mockRestore();
+    expect(process.exitCode).toBe(1);
   });
 });
