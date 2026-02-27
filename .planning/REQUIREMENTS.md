@@ -12,14 +12,14 @@ Requirements for the 1-week reliability/refactor milestone.
 - [x] **DIAG-01**: User can run `tavily doctor` to validate API key, API URL trust status, and local credential state.
 - [x] **DIAG-02**: User can run `tavily doctor` to validate setup dependencies (`node`, `npm`, `npx`) and skill/MCP install readiness.
 - [x] **DIAG-03**: User can run `tavily doctor --json` and receive a machine-readable report with check statuses.
-- [ ] **DIAG-04**: User can run `tavily doctor --fix` to apply safe automated remediations for common local setup issues.
+- [x] **DIAG-04**: User can run `tavily doctor --fix` to apply safe automated remediations for common local setup issues.
 
 ### Reliability
 
 - [x] **RELI-01**: User receives standardized error output format across all commands (clear code, cause, suggested action).
 - [x] **RELI-02**: User receives specific handling for Tavily API/network failures, including retry guidance.
 - [x] **RELI-03**: User gets consistent non-zero exit behavior from CLI boundary, without deep module exits causing unpredictable flows.
-- [ ] **RELI-04**: User can trust command stability through added smoke/integration coverage over critical command paths.
+- [x] **RELI-04**: User can trust command stability through added smoke/integration coverage over critical command paths.
 
 ### Architecture Refactor
 
@@ -30,7 +30,7 @@ Requirements for the 1-week reliability/refactor milestone.
 
 ### Release Hardening
 
-- [ ] **REL-01**: Release pipeline blocks publish when type-check, tests, build, or smoke gates fail.
+- [x] **REL-01**: Release pipeline blocks publish when type-check, tests, build, or smoke gates fail.
 - [x] **REL-02**: Release documentation includes migration notes for intentional breaking changes.
 - [x] **REL-03**: Team can execute a repeatable release checklist within the 1-week delivery cycle.
 
@@ -63,16 +63,16 @@ Explicitly excluded from v1.
 | DIAG-01     | Phase 2 | Complete |
 | DIAG-02     | Phase 2 | Complete |
 | DIAG-03     | Phase 2 | Complete |
-| DIAG-04     | Phase 4 | Pending  |
+| DIAG-04     | Phase 4 | Complete |
 | RELI-01     | Phase 3 | Complete |
 | RELI-02     | Phase 3 | Complete |
 | RELI-03     | Phase 1 | Complete |
-| RELI-04     | Phase 4 | Pending  |
+| RELI-04     | Phase 4 | Complete |
 | ARCH-01     | Phase 1 | Complete |
 | ARCH-02     | Phase 3 | Complete |
 | ARCH-03     | Phase 1 | Complete |
 | ARCH-04     | Phase 3 | Complete |
-| REL-01      | Phase 4 | Pending  |
+| REL-01      | Phase 4 | Complete |
 | REL-02      | Phase 4 | Complete |
 | REL-03      | Phase 4 | Complete |
 
@@ -85,4 +85,4 @@ Explicitly excluded from v1.
 ---
 
 _Requirements defined: 2026-02-27_
-_Last updated: 2026-02-27 after phase 3 completion_
+_Last updated: 2026-02-27 after phase 4 completion_
