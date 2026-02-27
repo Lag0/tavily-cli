@@ -60,7 +60,7 @@ Plans:
 
 Plans:
 - [x] 03-01: Define shared error model and apply across command handlers
-- [ ] 03-02: Replace unsafe payload casts with typed adapters
+- [x] 03-02: Replace unsafe payload casts with typed adapters
 - [ ] 03-03: Expand integration regression tests for command routing and parsing
 
 ### Phase 4: Release Hardening and Auto-Remediation
@@ -88,5 +88,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Architecture Baseline Refactor | 3/3 | Complete    | 2026-02-27 |
 | 2. Diagnostics Command Foundation | 3/3 | Complete    | 2026-02-27 |
-| 3. Reliability and Type-Safe Contracts | 1/3 | In Progress | - |
+| 3. Reliability and Type-Safe Contracts | 2/3 | In Progress | - |
 | 4. Release Hardening and Auto-Remediation | 0/3 | Not started | - |

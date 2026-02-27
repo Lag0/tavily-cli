@@ -24,7 +24,7 @@ Requirements for the 1-week reliability/refactor milestone.
 ### Architecture Refactor
 
 - [x] **ARCH-01**: Maintainer can add/modify commands via modular command registration (no single oversized router file bottleneck).
-- [ ] **ARCH-02**: Maintainer can rely on typed request/response adapters with removal of current `as any` command payload casts.
+- [x] **ARCH-02**: Maintainer can rely on typed request/response adapters with removal of current `as any` command payload casts.
 - [x] **ARCH-03**: Maintainer can reuse shared command context/utilities to reduce duplicated option/client/output wiring.
 - [ ] **ARCH-04**: Maintainer can evolve command surface with regression safeguards in integration tests for routing and parser behavior.
 
@@ -69,7 +69,7 @@ Explicitly excluded from v1.
 | RELI-03 | Phase 1 | Complete |
 | RELI-04 | Phase 4 | Pending |
 | ARCH-01 | Phase 1 | Complete |
-| ARCH-02 | Phase 3 | Pending |
+| ARCH-02 | Phase 3 | Complete |
 | ARCH-03 | Phase 1 | Complete |
 | ARCH-04 | Phase 3 | Pending |
 | REL-01 | Phase 4 | Pending |
@@ -83,4 +83,4 @@ Explicitly excluded from v1.
 
 ---
 *Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after phase 3 plan 03-01 completion*
+*Last updated: 2026-02-27 after phase 3 plan 03-02 completion*
