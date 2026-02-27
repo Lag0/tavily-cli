@@ -51,12 +51,14 @@ describe('handleLoginCommand', () => {
   });
 
   it('fails when api key is missing and no env var is set', async () => {
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    const exitSpy = vi
-      .spyOn(process, 'exit')
-      .mockImplementation(((code?: string | number | null | undefined) => {
-        throw new Error(`process.exit:${code}`);
-      }) as never);
+    const errorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(((
+      code?: string | number | null | undefined
+    ) => {
+      throw new Error(`process.exit:${code}`);
+    }) as never);
 
     await expect(handleLoginCommand({})).rejects.toThrow('process.exit:1');
     expect(errorSpy).toHaveBeenCalledWith(

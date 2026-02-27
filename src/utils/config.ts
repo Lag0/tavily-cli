@@ -42,7 +42,10 @@ function normalizeApiUrl(raw?: string): string {
   const trustedHost = isTrustedApiHost(hostname) || localhost;
   const allowUntrusted = process.env[ALLOW_UNTRUSTED_API_URL_ENV] === '1';
 
-  if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && localhost)) {
+  if (
+    parsed.protocol !== 'https:' &&
+    !(parsed.protocol === 'http:' && localhost)
+  ) {
     throw new Error(
       `Invalid API URL protocol: ${parsed.protocol}. Use https (or http only for localhost).`
     );
@@ -77,7 +80,9 @@ export function getConfig(): GlobalConfig {
 
 export function updateConfig(config: Partial<GlobalConfig>): void {
   const nextApiUrl =
-    config.apiUrl !== undefined ? normalizeApiUrl(config.apiUrl) : globalConfig.apiUrl;
+    config.apiUrl !== undefined
+      ? normalizeApiUrl(config.apiUrl)
+      : globalConfig.apiUrl;
   globalConfig = { ...globalConfig, ...config, apiUrl: nextApiUrl };
 }
 
@@ -92,10 +97,10 @@ export function getApiKey(provided?: string): string | undefined {
 export function getApiUrl(provided?: string): string {
   return normalizeApiUrl(
     provided ||
-    globalConfig.apiUrl ||
-    process.env.TAVILY_API_URL ||
-    loadCredentials()?.apiUrl ||
-    DEFAULT_API_URL
+      globalConfig.apiUrl ||
+      process.env.TAVILY_API_URL ||
+      loadCredentials()?.apiUrl ||
+      DEFAULT_API_URL
   );
 }
 

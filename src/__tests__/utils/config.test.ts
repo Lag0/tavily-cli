@@ -36,4 +36,3 @@ describe('config apiUrl hardening', () => {
     expect(getApiUrl()).toBe('http://localhost:8080');
   });
 });
-

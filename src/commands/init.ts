@@ -60,13 +60,7 @@ export async function handleInitCommand(
   if (!options.skipSkills) {
     printStep('Installing tavily skill...');
 
-    const args = [
-      'npx',
-      '-y',
-      SKILLS_NPX_PACKAGE,
-      'add',
-      SKILL_SOURCE,
-    ];
+    const args = ['npx', '-y', SKILLS_NPX_PACKAGE, 'add', SKILL_SOURCE];
     const command = args.shift() as string;
 
     if (options.all) args.push('--all');

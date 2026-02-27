@@ -5,9 +5,10 @@ export function isUrl(value: string): boolean {
     const hostname = url.hostname.toLowerCase();
     const hasDot = hostname.includes('.');
     const isLocalhost = hostname === 'localhost';
-    const isIpv4 = /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}$/.test(
-      hostname
-    );
+    const isIpv4 =
+      /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}$/.test(
+        hostname
+      );
     const isIpv6 = hostname.includes(':');
     const isHttp = url.protocol === 'http:' || url.protocol === 'https:';
 

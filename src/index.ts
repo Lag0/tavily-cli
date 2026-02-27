@@ -63,16 +63,15 @@ export function createProgram(): Command {
 
   program
     .name('tavily')
-    .description('CLI tool for Tavily search, extraction, crawling, and research')
+    .description(
+      'CLI tool for Tavily search, extraction, crawling, and research'
+    )
     .version(packageJson.version)
     .option(
       '-k, --api-key <key>',
       'Tavily API key (or set TAVILY_API_KEY env var)'
     )
-    .option(
-      '--api-url <url>',
-      'Tavily API URL (or set TAVILY_API_URL env var)'
-    )
+    .option('--api-url <url>', 'Tavily API URL (or set TAVILY_API_URL env var)')
     .hook('preAction', (thisCommand, actionCommand) => {
       const globalOptions = thisCommand.opts();
       const commandOptions = actionCommand.opts();
@@ -240,8 +239,14 @@ export function createProgram(): Command {
     )
     .option('--extract-depth <depth>', 'Extract depth: basic or advanced')
     .option('--select-paths <patterns>', 'Comma-separated regex path filters')
-    .option('--select-domains <patterns>', 'Comma-separated regex domain filters')
-    .option('--exclude-paths <patterns>', 'Comma-separated regex path exclusions')
+    .option(
+      '--select-domains <patterns>',
+      'Comma-separated regex domain filters'
+    )
+    .option(
+      '--exclude-paths <patterns>',
+      'Comma-separated regex path exclusions'
+    )
     .option(
       '--exclude-domains <patterns>',
       'Comma-separated regex domain exclusions'
@@ -317,8 +322,14 @@ export function createProgram(): Command {
       parseIntegerOption('--limit')
     )
     .option('--select-paths <patterns>', 'Comma-separated regex path filters')
-    .option('--select-domains <patterns>', 'Comma-separated regex domain filters')
-    .option('--exclude-paths <patterns>', 'Comma-separated regex path exclusions')
+    .option(
+      '--select-domains <patterns>',
+      'Comma-separated regex domain filters'
+    )
+    .option(
+      '--exclude-paths <patterns>',
+      'Comma-separated regex path exclusions'
+    )
     .option(
       '--exclude-domains <patterns>',
       'Comma-separated regex domain exclusions'
