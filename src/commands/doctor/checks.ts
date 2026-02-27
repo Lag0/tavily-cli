@@ -10,15 +10,22 @@ const ALLOW_UNTRUSTED_API_URL_ENV = 'TAVILY_ALLOW_UNTRUSTED_API_URL';
 export type DoctorCheckCategory = 'auth' | 'api-url' | 'dependency' | 'setup';
 export type DoctorCheckStatus = 'pass' | 'warn' | 'fail';
 
-export type DoctorCheckId =
-  | 'auth.api_key_resolution'
-  | 'auth.credentials_file'
-  | 'api_url.trust_posture'
-  | 'deps.node'
-  | 'deps.npm'
-  | 'deps.npx'
-  | 'setup.skills_readiness'
-  | 'setup.mcp_readiness';
+export const DOCTOR_CHECK_IDS = [
+  'auth.api_key_resolution',
+  'auth.credentials_file',
+  'api_url.trust_posture',
+  'deps.node',
+  'deps.npm',
+  'deps.npx',
+  'setup.skills_readiness',
+  'setup.mcp_readiness',
+] as const;
+
+export type DoctorCheckId = (typeof DOCTOR_CHECK_IDS)[number];
+
+export function isDoctorCheckId(value: string): value is DoctorCheckId {
+  return (DOCTOR_CHECK_IDS as readonly string[]).includes(value);
+}
 
 export interface DoctorCheckResult {
   id: DoctorCheckId;

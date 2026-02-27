@@ -113,6 +113,35 @@ describe('CLI integration', () => {
     });
   });
 
+  it('passes doctor fix options through tooling registrar', async () => {
+    const { runCli } = await loadCli();
+    await runCli([
+      'node',
+      'tavily',
+      'doctor',
+      '--fix',
+      '--fix-dry-run',
+      '--fix-check',
+      'auth.credentials_file,api_url.trust_posture',
+      '--fix-check',
+      'deps.node',
+    ]);
+
+    expect(handleDoctorCommand).toHaveBeenCalledTimes(1);
+    expect(handleDoctorCommand).toHaveBeenCalledWith({
+      output: undefined,
+      json: false,
+      pretty: false,
+      fix: true,
+      fixDryRun: true,
+      fixCheck: [
+        'auth.credentials_file',
+        'api_url.trust_posture',
+        'deps.node',
+      ],
+    });
+  });
+
   it('preserves zero exit code when doctor diagnostics pass', async () => {
     handleDoctorCommand.mockImplementationOnce(async () => {
       process.exitCode = 0;

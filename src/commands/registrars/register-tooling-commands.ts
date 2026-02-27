@@ -3,6 +3,13 @@ import { handleInitCommand } from '../init';
 import { handleSetupCommand, type SetupSubcommand } from '../setup';
 import { handleEnvPullCommand } from '../env';
 import { handleDoctorCommand } from '../doctor';
+import { parseList } from '../../utils/options';
+
+function collectDoctorFixChecks(value: string, previous: string[] = []): string[] {
+  const parsed = parseList(value);
+  if (!parsed) return previous;
+  return [...previous, ...parsed];
+}
 
 export function registerToolingCommands(program: Command): void {
   program
@@ -59,11 +66,35 @@ export function registerToolingCommands(program: Command): void {
     .option('-o, --output <path>', 'Output file path')
     .option('--json', 'Output as JSON', false)
     .option('--pretty', 'Pretty print JSON output', false)
+    .option('--fix', 'Apply allowlisted safe local remediations', false)
+    .option(
+      '--fix-check <check-id>',
+      'Limit fixes to one or more check IDs (repeatable or comma-separated)',
+      collectDoctorFixChecks,
+      []
+    )
+    .option('--fix-dry-run', 'Preview safe remediations without mutating files', false)
     .action(async (options) => {
-      await handleDoctorCommand({
+      const doctorOptions: Parameters<typeof handleDoctorCommand>[0] = {
         output: options.output,
         json: options.json,
         pretty: options.pretty,
+      };
+
+      if (options.fix) {
+        doctorOptions.fix = true;
+      }
+
+      if (Array.isArray(options.fixCheck) && options.fixCheck.length > 0) {
+        doctorOptions.fixCheck = options.fixCheck;
+      }
+
+      if (options.fixDryRun) {
+        doctorOptions.fixDryRun = true;
+      }
+
+      await handleDoctorCommand({
+        ...doctorOptions,
       });
     });
 }
