@@ -5,3 +5,11 @@ skills
 vitest.config.mjs
 tsconfig.json
 dist/**/*.map
+.agent
+.firecrawl
+.tavily
+.claude
+.codex
+.opencode
+.planning
+.superset
