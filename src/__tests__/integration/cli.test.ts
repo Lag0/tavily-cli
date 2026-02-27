@@ -147,6 +147,29 @@ describe('CLI integration', () => {
     );
   });
 
+  it('rejects invalid positive-number parser options before executing command', async () => {
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'extract', '--url', 'https://example.com', '--timeout', '0']);
+
+    expect(handleExtractCommand).not.toHaveBeenCalled();
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('rejects invalid JSON schema option before research handler executes', async () => {
+    const { runCli } = await loadCli();
+    await runCli([
+      'node',
+      'tavily',
+      'research',
+      'ai trends',
+      '--output-schema',
+      '{invalid',
+    ]);
+
+    expect(handleResearchCommand).not.toHaveBeenCalled();
+    expect(process.exitCode).toBe(1);
+  });
+
   it('rejects legacy --status on non-status commands', async () => {
     const { runCli } = await loadCli();
     await runCli(['node', 'tavily', 'search', 'hello', '--status']);
@@ -174,6 +197,19 @@ describe('CLI integration', () => {
     expect(process.exitCode).toBe(1);
     expect(errorSpy).toHaveBeenCalledWith(
       'Error [COMMAND_FAILED]: search failed\nRemediation: retry later'
+    );
+  });
+
+  it('normalizes unknown thrown errors into deterministic CLI runtime output', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { runCli } = await loadCli();
+    handleSearchCommand.mockRejectedValueOnce(new Error('socket hang up'));
+
+    await runCli(['node', 'tavily', 'search', 'hello']);
+
+    expect(process.exitCode).toBe(1);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Error [COMMAND_EXECUTION_FAILED]:')
     );
   });
 });

@@ -13,6 +13,10 @@ describe('parseList', () => {
   it('returns undefined for empty input', () => {
     expect(parseList(undefined)).toBeUndefined();
   });
+
+  it('returns undefined when list contains only separators and spaces', () => {
+    expect(parseList(' , , ')).toBeUndefined();
+  });
 });
 
 describe('parseJsonObject', () => {
@@ -26,6 +30,10 @@ describe('parseJsonObject', () => {
 
   it('throws for non-object JSON', () => {
     expect(() => parseJsonObject('[1,2]')).toThrow('Expected a JSON object.');
+  });
+
+  it('throws for primitive JSON values', () => {
+    expect(() => parseJsonObject('"hello"')).toThrow('Expected a JSON object.');
   });
 
   it('throws a clear message for invalid JSON', () => {
