@@ -7,3 +7,9 @@ dist/
 .DS_Store
 coverage/
 .superset
+.claude
+.codex
+.agent
+.gemini
+.opencode
+.claude-plugin
