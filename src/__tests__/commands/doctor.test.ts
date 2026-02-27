@@ -1,4 +1,11 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'fs';
+import {
+  chmodSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { spawnSync } from 'child_process';
@@ -39,7 +46,21 @@ describe('doctor checks (auth and trust)', () => {
     tempDir = mkdtempSync(path.join(os.tmpdir(), 'tavily-doctor-test-'));
 
     vi.mocked(getConfigDirectoryPath).mockReturnValue(tempDir);
-    vi.mocked(loadCredentials).mockReturnValue(null);
+    vi.mocked(loadCredentials).mockImplementation(() => {
+      const credentialsPath = path.join(tempDir, 'credentials.json');
+      if (!existsSync(credentialsPath)) {
+        return null;
+      }
+
+      try {
+        return JSON.parse(readFileSync(credentialsPath, 'utf-8')) as {
+          apiKey?: string;
+          apiUrl?: string;
+        };
+      } catch {
+        return null;
+      }
+    });
     vi.mocked(spawnSync).mockImplementation((command) => {
       const rawCommand = String(command);
       const normalized = rawCommand.endsWith('.cmd')
@@ -183,6 +204,95 @@ describe('doctor checks (auth and trust)', () => {
         })
       );
     }
+  });
+
+  it('repairs malformed credentials file with backup when --fix is enabled', async () => {
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+    const credentialsPath = path.join(tempDir, 'credentials.json');
+    writeFileSync(credentialsPath, '{invalid-json', 'utf-8');
+
+    await buildDoctorCommandReport({ fix: true });
+
+    expect(existsSync(`${credentialsPath}.bak`)).toBe(true);
+    expect(readFileSync(credentialsPath, 'utf-8')).toContain('{}');
+
+    const checks = await runDoctorChecks();
+    expect(getCheck(checks, 'auth.credentials_file').status).toBe('pass');
+  });
+
+  it('restores secure credentials file permissions when --fix is enabled', async () => {
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+    const credentialsPath = path.join(tempDir, 'credentials.json');
+    writeFileSync(credentialsPath, JSON.stringify({ apiKey: 'tvly' }), 'utf-8');
+    chmodSync(credentialsPath, 0o000);
+
+    await buildDoctorCommandReport({ fix: true });
+
+    const checks = await runDoctorChecks();
+    expect(getCheck(checks, 'auth.credentials_file').status).toBe('pass');
+  });
+
+  it('resets untrusted stored API URL to trusted default during --fix', async () => {
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+    const credentialsPath = path.join(tempDir, 'credentials.json');
+    writeFileSync(
+      credentialsPath,
+      JSON.stringify(
+        {
+          apiKey: 'tvly-stored-key',
+          apiUrl: 'https://example.invalid',
+        },
+        null,
+        2
+      ),
+      'utf-8'
+    );
+
+    await buildDoctorCommandReport({ fix: true });
+    const parsed = JSON.parse(readFileSync(credentialsPath, 'utf-8')) as {
+      apiUrl?: string;
+    };
+    expect(parsed.apiUrl).toBe('https://api.tavily.com');
+  });
+
+  it('does not mutate files during fix dry run', async () => {
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+    const credentialsPath = path.join(tempDir, 'credentials.json');
+    writeFileSync(credentialsPath, '{invalid-json', 'utf-8');
+
+    await buildDoctorCommandReport({
+      fix: true,
+      fixDryRun: true,
+    });
+
+    expect(readFileSync(credentialsPath, 'utf-8')).toBe('{invalid-json');
+    expect(existsSync(`${credentialsPath}.bak`)).toBe(false);
+  });
+
+  it('does not auto-fix untrusted API URL when source is environment', async () => {
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+    process.env.TAVILY_API_URL = 'https://example.invalid';
+
+    const credentialsPath = path.join(tempDir, 'credentials.json');
+    writeFileSync(
+      credentialsPath,
+      JSON.stringify(
+        {
+          apiKey: 'tvly-stored-key',
+          apiUrl: 'https://api.tavily.com',
+        },
+        null,
+        2
+      ),
+      'utf-8'
+    );
+
+    await buildDoctorCommandReport({ fix: true });
+
+    const parsed = JSON.parse(readFileSync(credentialsPath, 'utf-8')) as {
+      apiUrl?: string;
+    };
+    expect(parsed.apiUrl).toBe('https://api.tavily.com');
   });
 
   it('sets success exit code when diagnostics do not have required failures', async () => {
