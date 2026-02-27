@@ -18,14 +18,14 @@ Requirements for the 1-week reliability/refactor milestone.
 
 - [ ] **RELI-01**: User receives standardized error output format across all commands (clear code, cause, suggested action).
 - [ ] **RELI-02**: User receives specific handling for Tavily API/network failures, including retry guidance.
-- [ ] **RELI-03**: User gets consistent non-zero exit behavior from CLI boundary, without deep module exits causing unpredictable flows.
+- [x] **RELI-03**: User gets consistent non-zero exit behavior from CLI boundary, without deep module exits causing unpredictable flows.
 - [ ] **RELI-04**: User can trust command stability through added smoke/integration coverage over critical command paths.
 
 ### Architecture Refactor
 
-- [ ] **ARCH-01**: Maintainer can add/modify commands via modular command registration (no single oversized router file bottleneck).
+- [x] **ARCH-01**: Maintainer can add/modify commands via modular command registration (no single oversized router file bottleneck).
 - [ ] **ARCH-02**: Maintainer can rely on typed request/response adapters with removal of current `as any` command payload casts.
-- [ ] **ARCH-03**: Maintainer can reuse shared command context/utilities to reduce duplicated option/client/output wiring.
+- [x] **ARCH-03**: Maintainer can reuse shared command context/utilities to reduce duplicated option/client/output wiring.
 - [ ] **ARCH-04**: Maintainer can evolve command surface with regression safeguards in integration tests for routing and parser behavior.
 
 ### Release Hardening
@@ -66,11 +66,11 @@ Explicitly excluded from v1.
 | DIAG-04 | Phase 4 | Pending |
 | RELI-01 | Phase 3 | Pending |
 | RELI-02 | Phase 3 | Pending |
-| RELI-03 | Phase 1 | Pending |
+| RELI-03 | Phase 1 | Complete |
 | RELI-04 | Phase 4 | Pending |
-| ARCH-01 | Phase 1 | Pending |
+| ARCH-01 | Phase 1 | Complete |
 | ARCH-02 | Phase 3 | Pending |
-| ARCH-03 | Phase 1 | Pending |
+| ARCH-03 | Phase 1 | Complete |
 | ARCH-04 | Phase 3 | Pending |
 | REL-01 | Phase 4 | Pending |
 | REL-02 | Phase 4 | Pending |
