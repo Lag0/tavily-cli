@@ -1,4 +1,5 @@
 import type { DoctorCheckResult, DoctorCheckStatus } from './checks';
+import type { DoctorFixReport, DoctorFixStatus } from './fixes';
 
 export type DoctorOverallStatus = DoctorCheckStatus;
 
@@ -21,6 +22,7 @@ export interface DoctorReport {
   overallStatus: DoctorOverallStatus;
   summary: DoctorSummary;
   checks: DoctorCheckResult[];
+  fixes?: DoctorFixReport;
 }
 
 function getOverallStatus(summary: DoctorSummary): DoctorOverallStatus {
@@ -35,7 +37,8 @@ function countStatuses(checks: DoctorCheckResult[], status: DoctorCheckStatus): 
 
 export function buildDoctorReport(
   checks: DoctorCheckResult[],
-  generatedAt = new Date().toISOString()
+  generatedAt = new Date().toISOString(),
+  fixes?: DoctorFixReport
 ): DoctorReport {
   const summary: DoctorSummary = {
     total: checks.length,
@@ -54,6 +57,7 @@ export function buildDoctorReport(
     overallStatus: getOverallStatus(summary),
     summary,
     checks,
+    fixes,
   };
 }
 
@@ -61,6 +65,12 @@ function statusLabel(status: DoctorCheckStatus): string {
   if (status === 'pass') return 'PASS';
   if (status === 'warn') return 'WARN';
   return 'FAIL';
+}
+
+function fixStatusLabel(status: DoctorFixStatus): string {
+  if (status === 'applied') return 'APPLIED';
+  if (status === 'skipped') return 'SKIPPED';
+  return 'FAILED';
 }
 
 export function renderDoctorTextReport(report: DoctorReport): string {
@@ -77,6 +87,27 @@ export function renderDoctorTextReport(report: DoctorReport): string {
     lines.push(`[${statusLabel(check.status)}] ${check.id} - ${check.message}`);
     if (check.remediation) {
       lines.push(`  Remediation: ${check.remediation}`);
+    }
+  }
+
+  if (report.fixes) {
+    lines.push('');
+    lines.push(`Fix mode: ${report.fixes.dryRun ? 'DRY RUN' : 'ACTIVE'}`);
+    lines.push(
+      `Fix attempts: ${report.fixes.summary.attempted} total (${report.fixes.summary.applied} applied, ${report.fixes.summary.skipped} skipped, ${report.fixes.summary.failed} failed)`
+    );
+    if (report.fixes.selectedChecks && report.fixes.selectedChecks.length > 0) {
+      lines.push(`Fix selection: ${report.fixes.selectedChecks.join(', ')}`);
+    }
+    lines.push('');
+
+    for (const fixResult of report.fixes.results) {
+      lines.push(
+        `[${fixStatusLabel(fixResult.status)}] ${fixResult.checkId} - ${fixResult.message}`
+      );
+      if (fixResult.reason) {
+        lines.push(`  Reason: ${fixResult.reason}`);
+      }
     }
   }
 

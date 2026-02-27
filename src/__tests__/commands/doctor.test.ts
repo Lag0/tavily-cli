@@ -295,6 +295,33 @@ describe('doctor checks (auth and trust)', () => {
     expect(parsed.apiUrl).toBe('https://api.tavily.com');
   });
 
+  it('includes fix outcome details in doctor report contracts', async () => {
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+    const credentialsPath = path.join(tempDir, 'credentials.json');
+    writeFileSync(credentialsPath, '{invalid-json', 'utf-8');
+
+    const report = await buildDoctorCommandReport({ fix: true });
+
+    expect(report.fixes).toEqual(
+      expect.objectContaining({
+        enabled: true,
+        dryRun: false,
+        summary: expect.objectContaining({
+          attempted: expect.any(Number),
+          applied: expect.any(Number),
+          skipped: expect.any(Number),
+          failed: expect.any(Number),
+        }),
+        results: expect.arrayContaining([
+          expect.objectContaining({
+            checkId: 'auth.credentials_file',
+            status: 'applied',
+          }),
+        ]),
+      })
+    );
+  });
+
   it('sets success exit code when diagnostics do not have required failures', async () => {
     const writeSpy = vi
       .spyOn(outputUtils, 'writeObjectOutput')
@@ -324,6 +351,42 @@ describe('doctor checks (auth and trust)', () => {
     process.exitCode = 0;
 
     await handleDoctorCommand({ json: true });
+
+    expect(writeSpy).toHaveBeenCalledTimes(1);
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('sets success exit code when --fix remediates required failures', async () => {
+    const writeSpy = vi
+      .spyOn(outputUtils, 'writeObjectOutput')
+      .mockImplementation(() => {});
+    process.env.TAVILY_API_KEY = 'tvly-env-key';
+
+    const credentialsPath = path.join(tempDir, 'credentials.json');
+    writeFileSync(credentialsPath, '{invalid-json', 'utf-8');
+    process.exitCode = 1;
+
+    await handleDoctorCommand({ json: true, fix: true });
+
+    expect(writeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fixes: expect.objectContaining({
+          enabled: true,
+        }),
+      }),
+      expect.objectContaining({ json: true })
+    );
+    expect(process.exitCode).toBe(0);
+  });
+
+  it('keeps non-zero exit code when required failures remain after --fix', async () => {
+    const writeSpy = vi
+      .spyOn(outputUtils, 'writeObjectOutput')
+      .mockImplementation(() => {});
+    delete process.env.TAVILY_API_KEY;
+    process.exitCode = 0;
+
+    await handleDoctorCommand({ json: true, fix: true });
 
     expect(writeSpy).toHaveBeenCalledTimes(1);
     expect(process.exitCode).toBe(1);

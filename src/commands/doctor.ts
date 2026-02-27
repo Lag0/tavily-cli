@@ -7,7 +7,7 @@ import {
   type DoctorCheckContext,
   type DoctorCheckId,
 } from './doctor/checks';
-import { runDoctorFixes } from './doctor/fixes';
+import { runDoctorFixes, type DoctorFixReport } from './doctor/fixes';
 import { buildDoctorReport, renderDoctorTextReport, type DoctorReport } from './doctor/report';
 
 export interface DoctorCommandOptions extends DoctorCheckContext {
@@ -59,9 +59,10 @@ export async function buildDoctorCommandReport(
     apiUrl: options.apiUrl,
   };
   let checks = await runDoctorChecks(context);
+  let fixes: DoctorFixReport | undefined;
 
   if (shouldRunFixes(options)) {
-    await runDoctorFixes({
+    fixes = await runDoctorFixes({
       checks,
       context,
       selectedChecks: resolveFixCheckSelection(options),
@@ -73,7 +74,7 @@ export async function buildDoctorCommandReport(
     }
   }
 
-  return buildDoctorReport(checks);
+  return buildDoctorReport(checks, undefined, fixes);
 }
 
 export async function handleDoctorCommand(
