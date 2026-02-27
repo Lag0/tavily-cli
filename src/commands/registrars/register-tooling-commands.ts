@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import { handleInitCommand } from '../init';
 import { handleSetupCommand, type SetupSubcommand } from '../setup';
 import { handleEnvPullCommand } from '../env';
+import { handleDoctorCommand } from '../doctor';
 
 export function registerToolingCommands(program: Command): void {
   program
@@ -49,6 +50,20 @@ export function registerToolingCommands(program: Command): void {
       await handleEnvPullCommand({
         file: options.file,
         overwrite: options.overwrite,
+      });
+    });
+
+  program
+    .command('doctor')
+    .description('Run local diagnostics for Tavily CLI readiness')
+    .option('-o, --output <path>', 'Output file path')
+    .option('--json', 'Output as JSON', false)
+    .option('--pretty', 'Pretty print JSON output', false)
+    .action(async (options) => {
+      await handleDoctorCommand({
+        output: options.output,
+        json: options.json,
+        pretty: options.pretty,
       });
     });
 }

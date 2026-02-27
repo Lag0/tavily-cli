@@ -12,6 +12,7 @@ const handleStatusCommand = vi.fn();
 const handleInitCommand = vi.fn();
 const handleSetupCommand = vi.fn();
 const handleEnvPullCommand = vi.fn();
+const handleDoctorCommand = vi.fn();
 
 const initializeConfig = vi.fn();
 const updateConfig = vi.fn();
@@ -31,6 +32,7 @@ vi.mock('../../commands/status', () => ({ handleStatusCommand }));
 vi.mock('../../commands/init', () => ({ handleInitCommand }));
 vi.mock('../../commands/setup', () => ({ handleSetupCommand }));
 vi.mock('../../commands/env', () => ({ handleEnvPullCommand }));
+vi.mock('../../commands/doctor', () => ({ handleDoctorCommand }));
 vi.mock('../../utils/config', () => ({
   initializeConfig,
   updateConfig,
@@ -84,6 +86,18 @@ describe('CLI integration', () => {
     expect(handleEnvPullCommand).toHaveBeenCalledWith({
       file: '.env.local',
       overwrite: true,
+    });
+  });
+
+  it('routes doctor command through tooling registrar', async () => {
+    const { runCli } = await loadCli();
+    await runCli(['node', 'tavily', 'doctor', '--json', '--pretty']);
+
+    expect(handleDoctorCommand).toHaveBeenCalledTimes(1);
+    expect(handleDoctorCommand).toHaveBeenCalledWith({
+      output: undefined,
+      json: true,
+      pretty: true,
     });
   });
 
