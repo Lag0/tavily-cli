@@ -22,6 +22,9 @@ describe('executeExtract', () => {
       format: 'markdown',
       includeImages: true,
       query: 'api docs',
+      timeout: 30,
+      chunksPerSource: 4,
+      includeUsage: true,
     });
 
     expect(mockExtract).toHaveBeenCalledWith(['https://example.com'], {
@@ -29,10 +32,10 @@ describe('executeExtract', () => {
       format: 'markdown',
       includeImages: true,
       includeFavicon: undefined,
-      includeUsage: undefined,
-      timeout: undefined,
+      includeUsage: true,
+      timeout: 30,
       query: 'api docs',
-      chunksPerSource: undefined,
+      chunksPerSource: 4,
     });
   });
 });

@@ -22,6 +22,9 @@ describe('executeSearch', () => {
       searchDepth: 'advanced',
       includeDomains: ['docs.tavily.com'],
       includeAnswer: true,
+      includeRawContent: true,
+      includeImageDescriptions: true,
+      includeUsage: true,
     });
 
     expect(mockSearch).toHaveBeenCalledWith('test query', {
@@ -34,12 +37,12 @@ describe('executeSearch', () => {
       includeDomains: ['docs.tavily.com'],
       excludeDomains: undefined,
       country: undefined,
-      includeRawContent: undefined,
+      includeRawContent: 'markdown',
       includeImages: undefined,
-      includeImageDescriptions: undefined,
+      includeImageDescriptions: true,
       includeAnswer: true,
       includeFavicon: undefined,
-      includeUsage: undefined,
+      includeUsage: true,
     });
   });
 });
