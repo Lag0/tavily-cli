@@ -89,7 +89,7 @@ tavily doctor --json --pretty
 - `login`: save credentials from interactive input or `TAVILY_API_KEY`
 - `logout`: clear saved credentials
 - `status`: auth/version summary
-- `doctor`: local diagnostics for auth, API URL trust, dependencies, and setup readiness
+- `doctor`: local diagnostics with optional safe auto-remediation (`--fix`, `--fix-check`, `--fix-dry-run`)
 - `init`: install + auth + skills
 - `setup <skills|mcp>`: install skill or MCP integration
 - `env`: write `TAVILY_API_KEY` to `.env`
@@ -107,6 +107,14 @@ Machine-readable diagnostics:
 ```bash
 tavily doctor --json --pretty
 tavily doctor --output .tavily/doctor.json
+```
+
+Safe remediation flow:
+
+```bash
+tavily doctor --fix-dry-run --json --pretty
+tavily doctor --fix
+tavily doctor --fix --fix-check auth.credentials_file
 ```
 
 Exit behavior for automation/CI:
@@ -147,4 +155,10 @@ pnpm install
 pnpm run type-check
 pnpm run build
 pnpm run test
+pnpm run smoke
 ```
+
+## Migration and Release Docs
+
+- [Migration Guide](./docs/migration.md)
+- [Release Checklist](./docs/release-checklist.md)
