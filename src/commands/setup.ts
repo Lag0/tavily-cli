@@ -1,5 +1,4 @@
 import { runCommandOrExit } from '../utils/process';
-import packageJson from '../../package.json';
 
 export type SetupSubcommand = 'skills' | 'mcp';
 
@@ -11,7 +10,7 @@ export interface SetupOptions {
 const SKILLS_NPX_PACKAGE = 'skills@1.4.1';
 const ADD_MCP_NPX_PACKAGE = 'add-mcp@1.2.2';
 const MCP_REMOTE_VERSION = '0.1.38';
-const SKILL_SOURCE = `https://github.com/lag0/tavily-cli/tree/v${packageJson.version}`;
+const SKILL_SOURCE = 'https://github.com/lag0/tavily-cli/tree/main';
 
 export async function handleSetupCommand(
   subcommand: SetupSubcommand,

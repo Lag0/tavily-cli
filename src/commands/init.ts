@@ -1,7 +1,6 @@
 import { getApiKey, updateConfig } from '../utils/config';
 import { saveCredentials } from '../utils/credentials';
 import { runCommandOrExit } from '../utils/process';
-import packageJson from '../../package.json';
 
 export interface InitOptions {
   global?: boolean;
@@ -15,7 +14,8 @@ export interface InitOptions {
 }
 
 const SKILLS_NPX_PACKAGE = 'skills@1.4.1';
-const SKILL_SOURCE = `https://github.com/lag0/tavily-cli/tree/v${packageJson.version}`;
+const SKILL_SOURCE = 'https://github.com/lag0/tavily-cli/tree/main';
+const CLI_PACKAGE = '@syxs/tavily-cli@latest';
 
 export async function handleInitCommand(
   options: InitOptions = {}
@@ -32,10 +32,10 @@ export async function handleInitCommand(
   };
 
   if (!options.skipInstall) {
-    printStep('Installing @syxs/tavily-cli globally...');
+    printStep(`Installing ${CLI_PACKAGE} globally...`);
     runCommandOrExit({
       command: 'npm',
-      args: ['install', '-g', `@syxs/tavily-cli@${packageJson.version}`],
+      args: ['install', '-g', CLI_PACKAGE],
       failureMessage: 'Failed to install @syxs/tavily-cli globally',
     });
     console.log('✓ CLI installed\n');

@@ -105,7 +105,7 @@ tavily setup mcp
 Equivalent direct commands:
 
 ```bash
-npx skills@1.4.1 add https://github.com/lag0/tavily-cli/tree/v0.1.5
+npx skills@1.4.1 add https://github.com/lag0/tavily-cli/tree/main
 npx add-mcp@1.2.2 "npx -y mcp-remote@0.1.38 https://mcp.tavily.com/mcp" --name tavily
 ```
 
