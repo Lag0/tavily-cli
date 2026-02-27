@@ -27,7 +27,7 @@ export interface DoctorCheckResult {
   required: boolean;
   message: string;
   remediation?: string;
-  details?: Record<string, unknown>;
+  details?: unknown;
 }
 
 export interface DoctorCheckContext {

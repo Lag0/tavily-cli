@@ -71,6 +71,11 @@ tavily map https://docs.tavily.com --max-depth 2
 # Research
 
 tavily research "Analyze current trends in retrieval-augmented generation" --model pro
+
+# Diagnose local readiness
+
+tavily doctor
+tavily doctor --json --pretty
 ```
 
 ## Commands
@@ -84,9 +89,30 @@ tavily research "Analyze current trends in retrieval-augmented generation" --mod
 - `login`: save credentials from interactive input or `TAVILY_API_KEY`
 - `logout`: clear saved credentials
 - `status`: auth/version summary
+- `doctor`: local diagnostics for auth, API URL trust, dependencies, and setup readiness
 - `init`: install + auth + skills
 - `setup <skills|mcp>`: install skill or MCP integration
 - `env`: write `TAVILY_API_KEY` to `.env`
+
+## Doctor Diagnostics
+
+Use `tavily doctor` to validate local readiness before running Tavily workflows:
+
+```bash
+tavily doctor
+```
+
+Machine-readable diagnostics:
+
+```bash
+tavily doctor --json --pretty
+tavily doctor --output .tavily/doctor.json
+```
+
+Exit behavior for automation/CI:
+
+- Exit `0`: no required diagnostic failures
+- Exit `1`: one or more required checks failed
 
 ## Setup Skills and MCP
 
